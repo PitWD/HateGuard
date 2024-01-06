@@ -95,7 +95,7 @@ def print_dict(d, indent=0):
 import json
 import os
 # open json file 'comments.json'
-with open('post_1.json', 'r') as f:
+with open('debug/comment10_7.json', 'r') as f:
     data = json.load(f)
 
 print("\n\n")

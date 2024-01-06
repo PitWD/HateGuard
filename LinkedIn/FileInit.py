@@ -32,6 +32,10 @@ if not os.path.exists('users.csv'):
         writer = csv.writer(f)
         writer.writerow(['id', 'firstName', 'lastName', 'nickName','rating', 'email', 'location', 'www', 'company', 'occupation', 'link', 'picture'])
 
+# Create debug folder, if missing
+if not os.path.exists('debug'):
+    os.mkdir('debug')
+
 # Create user folder, if missing
 if not os.path.exists('users'):
     os.mkdir('users')

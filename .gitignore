@@ -158,9 +158,10 @@ posts.csv
 users.csv
 secret.json
 settings.json
-/comments
-/posts
-/users
+comments/
+posts/
+users/
+debug/
 
 # MacOS
 .DS_Store

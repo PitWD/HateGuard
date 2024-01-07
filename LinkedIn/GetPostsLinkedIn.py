@@ -13,6 +13,7 @@ import ast
 import re
 import ESC
 import datetime
+import sys
 
 cLight = 37
 cGrey = 92
@@ -282,9 +283,7 @@ for post in posts:
                 ESC.SetForeGround(cAqua)
                 print(firstName + " " + lastName + " (" + nickName + ") [" + commenterID + "]")
                 print(occupation)
-                print(picture)
                 print(parentID + " -> " + commentID)
-                print(permaLink)
                 print(timeStamp)
                 ESC.SetForeGround(cDark)
                 print(commentText + "\n\n")
@@ -294,103 +293,81 @@ for post in posts:
 
             # Get more comments
             moreComments = comment['socialDetail']['comments']['elements']
-            # Remove leading and trailing '[' and ']' if they exist
-            moreComments = str(moreComments).strip('[]')
-            
-            if moreComments != '':  # Probably more comments
-                try:
-                    # Make dict from string
-                    moreComments = ast.literal_eval(moreComments)
-                except:
-                    if debug_level > 0:
-                        ESC.SetForeGround(cRed)
-                        print("\n\n****************************")
-                        print("Couldn't create moreComments")
-                        print('from comment_'+str(postCnt)+'_'+str(commentCnt)+'.json')
-                        print("****************************")
-                        ESC.ResetForeGround()
-                        print("\n\n")
-                        if debug_level > 1:
-                            print_dict(comment)
-                            print("\n\n")
-                    else:
-                        pass
-                
-                moreCommentCnt = 0
 
+            moreCommentCnt = 0
+           
+            if str(moreComments) != '[]':  # Probably more comments
+                                
                 for moreComment in moreComments:    # 1st level
 
-                    if moreComment != 'dashEntityUrn':    # No more comments if text is '"dashEntityUrn"'
+                    #if moreComment != 'dashEntityUrn':    # No more comments if text is '"dashEntityUrn"'
                         
-                        moreCommentCnt += 1
-                        
-                        if debug_level > 0:
-                            # Save comment (its a dict) in a txt file
-                            with open('debug/moreComment_'+str(postCnt)+'_'+str(commentCnt)+'_'+str(moreCommentCnt)+'.json', 'w') as f:
-                                json.dump(moreComment, f)   
+                    moreCommentCnt += 1
+                    
+                    if debug_level > 0:
+                        # Save comment (its a dict) in a txt file
+                        with open('debug/moreComment_'+str(postCnt)+'_'+str(commentCnt)+'_'+str(moreCommentCnt)+'.json', 'w') as f:
+                            json.dump(moreComment, f)   
 
+                    try:
+
+                        parentID = commentID
+                        timeStamp = int(moreComment['createdTime']) / 1000
+                        # Convert timeStamp to string (DD.MM.YYYY HH:MM:SS)
+                        timeStamp = datetime.datetime.fromtimestamp(timeStamp).strftime("%d.%m.%Y %H:%M:%S")
+                        commentText = moreComment['commentV2']['text']
+                        permaLink = moreComment['permalink']
+
+                        commentID2 = fix_commentID(moreComment['dashEntityUrn'])
+                    
+                        # Extract most user-info from encapsulated dict
+                        user = moreComment['commenterForDashConversion']['image']['attributes']
+                        # Remove leading and trailing '[' and ']' if they exist
+                        user = str(user).strip('[]')
+                        # Make dict from string
+                        user = ast.literal_eval(user)
+
+                        firstName = user['miniProfile']['firstName']
+                        lastName = user['miniProfile']['lastName']
+                        nickName = user['miniProfile']['publicIdentifier']
+                        commenterID = user['miniProfile']['objectUrn']
+                        commenterID = re.findall(r'\d+', commenterID)[0]
+                        occupation = user['miniProfile']['occupation']
                         try:
-
-                            parentID = commentID
-                            timeStamp = int(moreComment['createdTime']) / 1000
-                            # Convert timeStamp to string (DD.MM.YYYY HH:MM:SS)
-                            timeStamp = datetime.datetime.fromtimestamp(timeStamp).strftime("%d.%m.%Y %H:%M:%S")
-                            commentText = moreComment['commentV2']['text']
-                            permaLink = moreComment['permalink']
-
-                            commentID2 = fix_commentID(moreComment['dashEntityUrn'])
-                        
-                            # Extract most user-info from encapsulated dict
-                            user = moreComment['commenterForDashConversion']['image']['attributes']
-                            # Remove leading and trailing '[' and ']' if they exist
-                            user = str(user).strip('[]')
-                            # Make dict from string
-                            user = ast.literal_eval(user)
-
-                            firstName = user['miniProfile']['firstName']
-                            lastName = user['miniProfile']['lastName']
-                            nickName = user['miniProfile']['publicIdentifier']
-                            commenterID = user['miniProfile']['objectUrn']
-                            commenterID = re.findall(r'\d+', commenterID)[0]
-                            occupation = user['miniProfile']['occupation']
-                            try:
-                                picture = user['miniProfile']['picture']['com.linkedin.common.VectorImage']['rootUrl'] + user['miniProfile']['picture']['com.linkedin.common.VectorImage']['artifacts'][0]['fileIdentifyingUrlPathSegment']
-                            except:
-                                picture = "N/A"
-
-                            if debug_level > 0:
-                                print('moreComment_'+str(postCnt)+'_'+str(commentCnt)+'_'+str(moreCommentCnt)+'.json')
-
-                                ESC.SetForeGround(cAqua)
-                                # print("\n\n")
-
-                                print(firstName + " " + lastName + " (" + nickName + ") [" + commenterID + "]")
-                                print(occupation)
-                                print(picture)
-                                print(parentID + " -> " + commentID2)
-                                print(permaLink)
-                                print(timeStamp)
-                                ESC.SetForeGround(cDark)
-                                print(commentText + "\n\n")
-
-                            user_to_users(commenterID, firstName, lastName, nickName, occupation, userLink, picture)
-                            comment_to_comments(commentID2, commenterID, parentID, timeStamp, permaLink, commentText)
-
+                            picture = user['miniProfile']['picture']['com.linkedin.common.VectorImage']['rootUrl'] + user['miniProfile']['picture']['com.linkedin.common.VectorImage']['artifacts'][0]['fileIdentifyingUrlPathSegment']
                         except:
-                            if debug_level > 0:
-                                ESC.SetForeGround(cRed)
-                                print("\n\n*************************")
-                                print("Error: Broken moreComment")
-                                print('moreComment_'+str(postCnt)+'_'+str(commentCnt)+'_'+str(moreCommentCnt)+'.json')
-                                print("*************************\n\n")
-                                ESC.ResetForeGround()
+                            picture = "N/A"
+
+                        if debug_level > 0:
+                            print('moreComment_'+str(postCnt)+'_'+str(commentCnt)+'_'+str(moreCommentCnt)+'.json')
+
+                            ESC.SetForeGround(cAqua)
+                            # print("\n\n")
+
+                            print(firstName + " " + lastName + " (" + nickName + ") [" + commenterID + "]")
+                            print(occupation)
+                            print(parentID + " -> " + commentID2)
+                            print(timeStamp)
+                            ESC.SetForeGround(cDark)
+                            print(commentText + "\n\n")
+
+                        user_to_users(commenterID, firstName, lastName, nickName, occupation, userLink, picture)
+                        comment_to_comments(commentID2, commenterID, parentID, timeStamp, permaLink, commentText)
+
+                    except:
+                        if debug_level > 0:
+                            ESC.SetForeGround(cRed)
+                            print("\n\n*************************")
+                            print("Error: Broken moreComment")
+                            print('moreComment_'+str(postCnt)+'_'+str(commentCnt)+'_'+str(moreCommentCnt)+'.json')
+                            print("*************************\n\n")
+                            ESC.ResetForeGround()
+                            print("\n\n")
+                            if debug_level > 1:
+                                print_dict(moreComment)
                                 print("\n\n")
-                                if debug_level > 1:
-                                    print_dict(moreComment)
-                                    print("\n\n")
-                            pass
-                    else:
-                        break
+                        pass
+
 
         
 # End of GetPostsLinkedIn.py

@@ -84,6 +84,12 @@ def get_post_date(postDate):
     postDate = postDate.strftime("%d.%m.%Y %H:%M:%S")
     return postDate
 
+def get_comment_timestamp(timeStamp):
+    timeStamp = int(timeStamp) / 1000
+    # Convert timeStamp to string (DD.MM.YYYY HH:MM:SS)
+    timeStamp = datetime.datetime.fromtimestamp(timeStamp).strftime("%d.%m.%Y %H:%M:%S")
+    return timeStamp
+
 def user_to_users(commenterID, firstName, lastName, nickName, occupation, userLink, picture):
     # Check if user.csv already contains commenterID on field 'id'
     userExist = 0
@@ -269,9 +275,8 @@ for post in posts:
                 picture = comment['commenter'][commenterType]['miniProfile']['picture']['com.linkedin.common.VectorImage']['rootUrl'] + comment['commenter']['com.linkedin.voyager.feed.MemberActor']['miniProfile']['picture']['com.linkedin.common.VectorImage']['artifacts'][0]['fileIdentifyingUrlPathSegment']
             except:
                 picture = "N/A"
-            timeStamp = int(comment['createdTime']) / 1000
-            # Convert timeStamp to string (DD.MM.YYYY HH:MM:SS)
-            timeStamp = datetime.datetime.fromtimestamp(timeStamp).strftime("%d.%m.%Y %H:%M:%S")
+
+            timeStamp = get_comment_timestamp(comment['createdTime'])
             commentText = comment['commentV2']['text']
             permaLink = comment['permalink']
 
@@ -312,9 +317,8 @@ for post in posts:
                     try:
 
                         parentID = commentID
-                        timeStamp = int(moreComment['createdTime']) / 1000
-                        # Convert timeStamp to string (DD.MM.YYYY HH:MM:SS)
-                        timeStamp = datetime.datetime.fromtimestamp(timeStamp).strftime("%d.%m.%Y %H:%M:%S")
+                        
+                        timeStamp = get_comment_timestamp(moreComment['createdTime'])
                         commentText = moreComment['commentV2']['text']
                         permaLink = moreComment['permalink']
 

@@ -226,7 +226,7 @@ for post in posts:
     
     commentCnt = 0
 
-    if numComments != lastCommentsCnt:   # New comments
+    if str(numComments) != str(lastCommentsCnt):   # New comments
 
         comments = api.get_post_comments(postID)
 
@@ -317,7 +317,7 @@ for post in posts:
                     try:
 
                         parentID = commentID
-                        
+
                         timeStamp = get_comment_timestamp(moreComment['createdTime'])
                         commentText = moreComment['commentV2']['text']
                         permaLink = moreComment['permalink']

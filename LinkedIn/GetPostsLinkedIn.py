@@ -134,6 +134,11 @@ def fix_commentID(commentID):
     commentID = commentID.rsplit(',', 1)[0]
     return commentID
 
+
+ESC.ResetBackGround()
+ESC.ResetForeGround()
+ESC.CLS()
+
 #Run FileInit.py (Initialize files and folders)
 os.system('python3 FileInit.py')
 

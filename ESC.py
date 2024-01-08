@@ -39,22 +39,22 @@ class BackGroundColor:
 
 # Classes for solarized color scheme
 class Solarized16:
-    Base03 = 30  # Schwarz
-    Base02 = 40  # Hintergrundfarbe Schwarz
-    Base01 = 32  # Grün
-    Base00 = 33  # Gelb
-    Base0 = 34   # Blau
-    Base1 = 36   # Cyan
-    Base2 = 37   # Hellgrau
-    Base3 = 97   # Weiß
-    Yellow = 33  # Gelb
-    Orange = 91  # Rot
+    Base02 = 30  # Schwarz
     Red = 31     # Rot
-    Magenta = 35 # Magenta
-    Violet = 35  # Magenta
-    Blue = 34    # Blau
-    Cyan = 36    # Cyan
     Green = 32   # Grün
+    Yellow = 33  # Gelb
+    Blue = 34    # Blau
+    Magenta = 35 # Magenta
+    Cyan = 36    # Cyan
+    Base2 = 37   # Weiß
+    Base03 = 90  # brSchwarz
+    Orange = 91  # Grün
+    Base01 = 92  # Gelb
+    Base00 = 93   # Cyan
+    Base0 = 94   # Hellgrau
+    Violet = 95  # Gelb
+    Base1 = 96  # Rot
+    Base3 = 97  # Magenta
 
 
 
@@ -77,7 +77,7 @@ def GetKey():
                 if c:
                     return c
                 else:
-                    return 0
+                    return ""
                 
             except IOError: pass
     finally:

@@ -3,7 +3,15 @@ import time
 import sys
 import os
 
-def PrintMenuPos(key, text, keyColor = ESC.Solarized16.Orange, txtColor = ESC.Solarized16.Base02, offset = 4):
+def PrintMenuPos(key, text, keyColor=None, txtColor=None, offset=None):
+    
+    if keyColor is None:
+        keyColor = ESC.Solarized16.Orange
+    if txtColor is None:
+        txtColor = ESC.Solarized16.Base1
+    if offset is None:
+        offset = 4
+    
     ESC.CursorRight(offset)
     ESC.SetForeGround(keyColor)  
     ESC.TxtBold(True)   

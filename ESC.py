@@ -1,6 +1,63 @@
 import os
 import sys, termios, fcntl      # GetKey
 
+class ForeGroundColor:
+    Black = 30
+    Red = 31
+    Green = 32
+    Yellow = 33
+    Blue = 34
+    Magenta = 35
+    Cyan = 36
+    LightGray = 37
+    DarkGray = 90
+    LightRed = 91
+    LightGreen = 92
+    LightYellow = 93
+    LightBlue = 94
+    LightMagenta = 95
+    LightCyan = 96
+    White = 97
+
+class BackGroundColor:
+    Black = 40
+    Red = 41
+    Green = 42
+    Yellow = 43
+    Blue = 44
+    Magenta = 45
+    Cyan = 46
+    LightGray = 47
+    DarkGray = 100
+    LightRed = 101
+    LightGreen = 102
+    LightYellow = 103
+    LightBlue = 104
+    LightMagenta = 105
+    LightCyan = 106
+    White = 107
+
+# Classes for solarized color scheme
+class Solarized16:
+    Base03 = 30  # Schwarz
+    Base02 = 40  # Hintergrundfarbe Schwarz
+    Base01 = 32  # Grün
+    Base00 = 33  # Gelb
+    Base0 = 34   # Blau
+    Base1 = 36   # Cyan
+    Base2 = 37   # Hellgrau
+    Base3 = 97   # Weiß
+    Yellow = 33  # Gelb
+    Orange = 31  # Rot
+    Red = 31     # Rot
+    Magenta = 35 # Magenta
+    Violet = 35  # Magenta
+    Blue = 34    # Blau
+    Cyan = 36    # Cyan
+    Green = 32   # Grün
+
+
+
 def GetKey():
     # from: https://stackoverflow.com/questions/71801157/detect-key-press-in-python-without-running-as-root-and-without-blockingioerror
     fd = sys.stdin.fileno()

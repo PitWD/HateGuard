@@ -56,6 +56,10 @@ class Solarized16:
     Base1 = 96  # Rot
     Base3 = 97  # Magenta
 
+def FixEcho(cnt = 1):
+    CursorLeft(cnt)
+    print(" " * cnt, end="", flush=True)
+    CursorLeft(cnt)
 
 
 def GetKey():
@@ -66,6 +70,7 @@ def GetKey():
     newattr = termios.tcgetattr(fd)
     newattr[3] = newattr[3] & ~termios.ICANON & ~termios.ECHO
     termios.tcsetattr(fd, termios.TCSANOW, newattr)
+    #termios.tcsetattr(fd, termios.TCSAFLUSH, newattr)
 
     oldflags = fcntl.fcntl(fd, fcntl.F_GETFL)
     fcntl.fcntl(fd, fcntl.F_SETFL, oldflags | os.O_NONBLOCK)
@@ -75,7 +80,18 @@ def GetKey():
             try:
                 c = sys.stdin.read(1)
                 if c:
-                    return c
+                    a = sys.stdin.read(1)
+                    if a:
+                        FixEcho(2)
+                    while a:
+                        # catching multiple chars
+                        c = ""
+                        FixEcho(1)
+                        a = sys.stdin.read(1)
+                    if not a and c:
+                        return c
+                    else:
+                        return ""
                 else:
                     return ""
                 

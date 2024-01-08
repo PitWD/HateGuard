@@ -20,7 +20,7 @@ def PrintMainMenu():
     print( " v" + HateGuardVersion, end="")
     print( " (" + HateGuardDate + ") ", end="")
     ESC.SetForeGround(ESC.Solarized16.Base01)
-    print( "by https://github.com/PitWD/HateGuard")
+    print( "by github.com/PitWD/HateGuard")
     ESC.ResetForeGround()
     print( "\n")
 
@@ -46,7 +46,7 @@ def PrintMainMenu():
     MEN.PrintMenuPos('I', "Do Instagram Scraping",ESC.Solarized16.Base01,ESC.Solarized16.Base01, 40)
 
     print("\n    ", end="")
-    print("Press Menue to select an option... > ", end="")
+    print("Press Key to select an option... > ", end="")
     ESC.SetForeGround(ESC.Solarized16.Orange)
     print(" ", end="", flush=True)  
     ESC.CursorLeft(1)
@@ -93,10 +93,8 @@ while pressedKey != "q":
     if pressedKey == " ":
         # We did something, so we need to refresh the screen
         PrintMainMenu()
-    elif pressedKey != "":
-        ESC.CursorLeft(1)
-        print(" ", end="", flush=True)
-        ESC.CursorLeft(1)
+    elif pressedKey != "" and pressedKey != "q":
+        ESC.FixEcho()
 ESC.ResetForeGround()
 print("\n\n")
 

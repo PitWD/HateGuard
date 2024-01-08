@@ -54,7 +54,7 @@ if not os.path.exists('posts'):
 if not os.path.exists('comments.csv'):
     with open('comments.csv', 'w', newline='') as f:
         writer = csv.writer(f)
-        writer.writerow(['id', 'userID', 'parentID', 'date', 'link'])
+        writer.writerow(['id', 'rating' 'userID', 'parentID', 'date', 'link'])
 
 # Create comments folder, if missing
 if not os.path.exists('comments'):

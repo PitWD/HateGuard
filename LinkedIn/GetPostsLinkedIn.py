@@ -122,7 +122,7 @@ def comment_to_comments(commentID, commenterID, parentID, timeStamp, permaLink, 
     if not commentExist:
         with open('comments.csv', 'a', newline='') as f:
             writer = csv.writer(f)
-            writer.writerow([commentID, commenterID, parentID, timeStamp, permaLink])  
+            writer.writerow([commentID, "0", commenterID, parentID, timeStamp, permaLink])  
         with open('comments/' + commentID + '.txt', 'w', encoding='utf-8') as f:
                     f.write(commentText)  
     return commentExist
@@ -142,6 +142,9 @@ ESC.CLS()
 #Run FileInit.py (Initialize files and folders)
 os.system('python3 FileInit.py')
 
+ESC.CLS()
+print ("    Scrap Posts from LinkedIn\n")
+
 # Get username and password from secret.json
 with open('secret.json', 'r') as f:
     data = json.load(f)
@@ -158,6 +161,9 @@ from linkedin_api import Linkedin
 
 # Create LinkedIn object
 api = Linkedin(username, password)
+
+print ("    API connected: " + str(api))
+print ("    Scraping user: " + user2scrap + "\n") 
 
 # Get the x most recent posts of user2scrap
 posts = api.get_profile_posts(public_id=user2scrap, post_count=10)

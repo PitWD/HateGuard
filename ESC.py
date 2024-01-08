@@ -34,7 +34,7 @@ def BreakLines(text, pos):
     for line in text.splitlines():
         while len(line) > pos:
             space_index = line.rfind(' ', 0, pos)
-            if space_index == -1:  # If no space found before the 60th character
+            if space_index == -1:  # If no space found before the Xth character
                 space_index = pos  # Break at the 60th character anyway
             lines.append(line[:space_index].rstrip())
             line = line[space_index:].lstrip()

@@ -1,5 +1,7 @@
+import sys
+import json
+sys.path.append('..')
 import ESC
-import ast
 
 cLight = 37
 cGrey = 92
@@ -37,11 +39,8 @@ def print_dict(d, indent=0, color = cGreen):
     ESC.ResetForeGround()
 
 
-# open json file
-import json
-import os
 # open json file 'comments.json'
-with open('debug/comment_10_1.json', 'r') as f:
+with open('LinkedIn/debug/comment_10_1.json', 'r') as f:
     data = json.load(f)
 
 print("\n\n")

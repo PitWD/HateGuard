@@ -27,6 +27,32 @@ def GetKey():
         termios.tcsetattr(fd, termios.TCSAFLUSH, oldterm)
         fcntl.fcntl(fd, fcntl.F_SETFL, oldflags)
 
+def BreakLines(text, pos):
+    # Split a string into multiple lines, each with a maximum length of 'pos'
+    lines = []
+    doubleLF = 0
+    for line in text.splitlines():
+        while len(line) > pos:
+            space_index = line.rfind(' ', 0, pos)
+            if space_index == -1:  # If no space found before the 60th character
+                space_index = pos  # Break at the 60th character anyway
+            lines.append(line[:space_index].rstrip())
+            line = line[space_index:].lstrip()
+        if line:  # Add any remaining part of the line
+            lines.append(line)
+            doubleLF = 0
+        else:   # simulate original LineFeed
+            if not doubleLF:    # prevent multiple LF
+                lines.append(" ")
+                doubleLF = 1
+    return '\n'.join(lines)
+
+def PrintLines(text, offset):
+    # Print a string, line for line, with a given offset
+    for line in text.splitlines():
+        CursorRight(offset)
+        print(line)
+
 def CursorSave():
     print("\0337", end="", flush=True)
 

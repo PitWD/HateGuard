@@ -11,9 +11,10 @@ import json
 import csv
 import ast
 import re
-import ESC
 import datetime
 import sys
+sys.path.append('..')
+import ESC
 
 cLight = 37
 cGrey = 92
@@ -220,7 +221,7 @@ for post in posts:
         print(postDate)    
         print(numLikes)
         print(numShares)
-        print(numComments)
+        print(str(numComments) + " / " + str(lastCommentsCnt))
         ESC.SetForeGround(cDark)
         print(postText + "\n\n")
     

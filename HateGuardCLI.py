@@ -1,6 +1,7 @@
 import sys
 import ESC
 import time
+import MEN
 
 HateGuardVersion = "0.1.0a"
 HateGuardDate = "10.01.2023"
@@ -17,5 +18,6 @@ print( " (" + HateGuardDate + ") ", end="")
 ESC.SetForeGround(ESC.Solarized16.Base02)
 print( "by https://github.com/PitWD/HateGuard")
 ESC.ResetForeGround()
+print( "\n")
 
-
+MEN.PrintMenuPos('h', "Show Help Screen")

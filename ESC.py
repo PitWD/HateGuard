@@ -48,7 +48,7 @@ class Solarized16:
     Base2 = 37   # Hellgrau
     Base3 = 97   # Weiß
     Yellow = 33  # Gelb
-    Orange = 31  # Rot
+    Orange = 91  # Rot
     Red = 31     # Rot
     Magenta = 35 # Magenta
     Violet = 35  # Magenta

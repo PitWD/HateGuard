@@ -123,6 +123,7 @@ with open('comments.csv', 'r') as f:
 
             # Print Post History
             ESC.CLS()
+            print("")
             if postFile != "":
                 ESC.SetForeGround(ESC.Solarized16.Base01)
                 postFile = ESC.BreakLines(postFile, 60)

@@ -60,6 +60,12 @@ if not os.path.exists('comments.csv'):
 if not os.path.exists('comments'):
     os.mkdir('comments')
 
+# Create poi.csv, if missing (Posts of Interest)
+if not os.path.exists('poi.csv'):
+    with open('poi.csv', 'w', newline='') as f:
+        writer = csv.writer(f)
+        writer.writerow(['idUser', 'idPost', 'reason','remark'])
+    
 # Check, if secret.json contains individual username and password
 with open('secret.json', 'r') as f:
     data = json.load(f)

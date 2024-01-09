@@ -156,6 +156,7 @@ cython_debug/
 comments.csv
 posts.csv
 users.csv
+poi.csv
 secret.json
 settings.json
 comments/

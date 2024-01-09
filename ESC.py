@@ -120,11 +120,15 @@ def BreakLines(text, pos):
                 doubleLF = 1
     return '\n'.join(lines)
 
-def PrintLines(text, offset):
+def PrintLines(text, offset = 0, cnt = 0):
     # Print a string, line for line, with a given offset
+    cnt2 = 0
     for line in text.splitlines():
+        cnt2 += 1
         CursorRight(offset)
         print(line)
+        if cnt == cnt2:
+            break
 
 def CursorSave():
     print("\0337", end="", flush=True)

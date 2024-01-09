@@ -60,7 +60,8 @@ while pressedKey != "q":
         pass
     elif pressedKey == "l":
         # Do LinkedIn Rating
-        pass
+        os.system('python3 RatingCLI.py -f LinkedIn')
+        pressedKey = " "
     elif pressedKey == "L":
         # Do LinkedIn Scraping
         os.chdir('LinkedIn')  

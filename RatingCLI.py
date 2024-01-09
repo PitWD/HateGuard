@@ -27,12 +27,15 @@ def PrintRating(rating):
 def PrintMenu():
     print("")
     MEN.PrintMenuPos('  o  ', "User OK")
+    ESC.CursorUp(1) 
     MEN.PrintMenuPos('w', "User WARNING", None, None, 40)
     MEN.PrintMenuPos('  c  ', "User CRITICAL")
+    ESC.CursorUp(1)
     MEN.PrintMenuPos('q', "QUIT processing",None, None, 40)
     MEN.PrintMenuPos('space', "Comment OK", ESC.Solarized16.Green)
+    ESC.CursorUp(1)
     MEN.PrintMenuPos('-', "Comment WARNING", ESC.Solarized16.Yellow, None, 40)
-    MEN.PrintMenuPos('enter', "Comment CRITICAL", ESC.Solarized16.Red)
+    MEN.PrintMenuPos('  +  ', "Comment CRITICAL", ESC.Solarized16.Red)
     print("\n    ", end="")
     print("Press Key to select an option... > ", end="")
     ESC.SetForeGround(ESC.Solarized16.Orange)
@@ -46,6 +49,7 @@ for i in range(1, argCount):
     if arg == "-f" or arg == "--folder":
         if i+1 < argCount:
             folder = sys.argv[i+1]
+            print("Folder: " + folder)
             if os.path.exists(folder):
                 os.chdir(folder)
             else:
@@ -61,9 +65,8 @@ for i in range(1, argCount):
 with open('comments.csv', 'r') as f:
     reader = csv.reader(f)
     comments = list(reader)
-    comments.reverse()
 
-    for comment in comments:
+    for comment in reversed(comments):
         postFile = ""
         commentFile = ""
         parentFile = ""
@@ -71,14 +74,13 @@ with open('comments.csv', 'r') as f:
         # Check, if comment is unrated
         if comment[1] == "0" or comment[1] == 0:
             # Open comment file
-            with open('comments/comment_' + comment[0] + '.txt', 'r') as f:
+            with open('comments/' + comment[0] + '.txt', 'r') as f:
                 commentFile = f.read()
             
             # Find user of comment
             with open('users.csv', 'r') as f:
                 reader = csv.reader(f)
                 users = list(reader)
-                users.reverse()
                 for user in users:
                     if user[0] == comment[2]:
                         userName = user[1] + " " + user[2]
@@ -95,7 +97,7 @@ with open('comments.csv', 'r') as f:
                 for post in posts:
                     if post[0] == comment[3]:
                         # Open post file
-                        with open('posts/post_' + post[0] + '.txt', 'r') as f:
+                        with open('posts/' + post[0] + '.txt', 'r') as f:
                             postFile = f.read()
                         break
             
@@ -104,20 +106,19 @@ with open('comments.csv', 'r') as f:
                 with open('comments.csv', 'r') as f:
                     reader = csv.reader(f)
                     comments2 = list(reader)
-                    comments2.reverse()
-                    for comment2 in comments2:
+                    for comment2 in reversed(comments2):
                         if comment2[0] == comment[3]:
                             # Open parent file
-                            with open('comments/comment_' + comment2[0] + '.txt', 'r') as f:
+                            with open('comments/' + comment2[0] + '.txt', 'r') as f:
                                 parentFile = f.read()
                             break
                 try:
                     # Open parent - post
-                    with open('posts/post_' + comment2[3] + '.txt', 'r') as f:
+                    with open('posts/' + comment2[3] + '.txt', 'r') as f:
                         postFile = f.read()
                 except:
                     # Parent is a comment, too
-                    with open('comments/comment_' + comment2[3] + '.txt', 'r') as f:
+                    with open('comments/' + comment2[3] + '.txt', 'r') as f:
                         postFile = f.read()
 
             # Print Post History
@@ -150,6 +151,7 @@ with open('comments.csv', 'r') as f:
             ESC.CursorRight(2)
             print(commentDate)
             ESC.TxtBold(0)
+            
             # Print Comment
             ESC.SetForeGround(ESC.Solarized16.Base2)
             commentFile = ESC.BreakLines(commentFile, 60)
@@ -165,6 +167,8 @@ with open('comments.csv', 'r') as f:
             saveComment = 0
             while pressedKey != "q":
                 pressedKey = ESC.GetKey()
+                saveUser = 0
+                saveComment = 0
                 if pressedKey == "o":
                     # User OK
                     user[4] = 1
@@ -185,68 +189,38 @@ with open('comments.csv', 'r') as f:
                     # Comment WARNING
                     comment[1] = 2
                     saveComment = 1
-                elif pressedKey == "enter":
+                elif pressedKey == "+":
                     # Comment CRITICAL
                     comment[1] = 3
                     saveComment = 1
-                    
 
+                if saveUser == 1:
+                    # Update users.csv
+                    with open('users.csv', 'w', newline='') as f:
+                        usersTmp = users.reverse()
+                        writer = csv.writer(f)
+                        writer.writerows(usersTmp)
+                elif saveComment == 1:
+                    # Update comments.csv
+                    with open('comments.csv', 'w', newline='') as f:
+                        #commentsTmp = comments.reverse()
+                        writer = csv.writer(f)
+                        writer.writerows(comments)
+                    pressedKey = " "
                         
+                if pressedKey == " ":
+                    # Leave Menu - next comment
+                    break
+                elif pressedKey != "" and pressedKey != "q":
+                    # Refresh Menu
+                    ESC.FixEcho()
+
+                time.sleep(0.1)
+
+            if pressedKey == "q":
+                # Quit processing
+                os.chdir('..')
+                break
 
 
 
-
-
-                        # Update comments.csv
-                        with open('comments.csv', 'w', newline='') as f:
-                            writer = csv.writer(f)
-                            writer.writerows(comments)
-
-                        # Print comment
-                        ESC.ResetForeGround()
-                        print("\n\n")
-                        print("Post: " + postFile)
-                        ESC.ResetForeGround()
-                        print("Comment: " + commentFile)
-                        print("Rating: ", end="")
-                        ESC.SetForeGround(ESC.Solarized16.Orange)
-                        print(rating, end="", flush=True)  
-                        ESC.CursorLeft(1)
-
-                        # Wait 0.5 seconds
-                        time.sleep(0.5)
-
-                        # Update comments.csv
-                        with open('comments.csv', 'w', newline='') as f:
-                            writer = csv.writer(f)
-                            writer.writerows(comments)
-
-                        # Print comment
-                        ESC.ResetForeGround()
-                        print("\n\n")
-                        print("Post: " + postFile)
-                        ESC.ResetForeGround()
-                        print("Comment: " + commentFile)
-                        print("Rating: ", end="")
-                        ESC.SetForeGround(ESC.Solarized16.Orange)
-                        print(rating, end="", flush=True)  
-                        ESC.CursorLeft(1)
-                
-                
-                            
-                # Update comments.csv
-                with open('comments.csv', 'w', newline='') as f:
-                    writer = csv.writer(f)
-                    writer.writerows(comments)
-
-                # Print comment
-                ESC.ResetForeGround()
-                print("\n\n")
-                print("Comment: " + comment[5])
-                print("Rating: ", end="")
-                ESC.SetForeGround(ESC.Solarized16.Orange)
-                print(comment[1], end="", flush=True)  
-                ESC.CursorLeft(1)
-
-                # Wait 0.5 seconds
-                time.sleep(0.5)

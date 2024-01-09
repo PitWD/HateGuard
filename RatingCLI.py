@@ -71,24 +71,25 @@ with open('comments.csv', 'r') as f:
         commentFile = ""
         parentFile = ""
         commentDate = comment[4]
-        # Check, if comment is unrated
-        if comment[1] == "0" or comment[1] == 0:
+
+        # Find user of comment
+        with open('users.csv', 'r') as f:
+            reader = csv.reader(f)
+            users = list(reader)
+            for user in users:
+                if user[0] == comment[2]:
+                    userName = user[1] + " " + user[2]
+                    userRating = int(user[4])
+                    userCompany = user[8]
+                    userOccupation = user[9]
+                    break
+
+        # Check, if comment is unrated and user is not rated as OK
+        if (comment[1] == "0" or comment[1] == 0) and (userRating != 1):
             # Open comment file
             with open('comments/' + comment[0] + '.txt', 'r') as f:
                 commentFile = f.read()
-            
-            # Find user of comment
-            with open('users.csv', 'r') as f:
-                reader = csv.reader(f)
-                users = list(reader)
-                for user in users:
-                    if user[0] == comment[2]:
-                        userName = user[1] + " " + user[2]
-                        userRating = int(user[4])
-                        userCompany = user[8]
-                        userOccupation = user[9]
-                        break
-            
+                        
             # Check if parent is a post
             with open('posts.csv', 'r') as f:
                 reader = csv.reader(f)

@@ -28,23 +28,41 @@ def PrintMenu():
     print("")
     MEN.PrintMenuPos('  o  ', "User OK")
     ESC.CursorUp(1) 
-    MEN.PrintMenuPos('w', "User WARNING", None, None, 30)
+    MEN.PrintMenuPos('w', "User WARNING", None, None, 32)
     ESC.CursorUp(1)
     MEN.PrintMenuPos('c', "User CRITICAL", None, None, 55)
     MEN.PrintMenuPos('space', "Comment OK", ESC.Solarized16.Green)
     ESC.CursorUp(1)
-    MEN.PrintMenuPos('I', "Comment OK & Contact User & Remark", ESC.Solarized16.Green, None, 30)
+    MEN.PrintMenuPos('i', "OK & POI", ESC.Solarized16.Green, None, 32)
+    ESC.CursorUp(1)
+    MEN.PrintMenuPos('I', "OK & POI & Rem.", ESC.Solarized16.Green, None, 55)
     MEN.PrintMenuPos('  -  ', "Comment WARNING", ESC.Solarized16.Yellow)
     ESC.CursorUp(1)
-    MEN.PrintMenuPos('+', "Comment CRITICAL", ESC.Solarized16.Red, None, 30)
+    MEN.PrintMenuPos('_', "WARNING & POI", ESC.Solarized16.Yellow, None, 32)
     ESC.CursorUp(1)
-    MEN.PrintMenuPos('i', "OK & Contact User", ESC.Solarized16.Green, None, 55)
+    MEN.PrintMenuPos('/', "WARN & POI & Rem.", ESC.Solarized16.Yellow, None, 55)
+    MEN.PrintMenuPos('  +  ', "Comment CRITICAL", ESC.Solarized16.Red)
+    ESC.CursorUp(1)
+    MEN.PrintMenuPos('#', "CRITICAL & POI", ESC.Solarized16.Red, None, 32)
+    ESC.CursorUp(1)
+    MEN.PrintMenuPos('*', "CRIT & POI & Rem.", ESC.Solarized16.Red, None, 55)
+
     MEN.PrintMenuPos('  q  ', "QUIT processing")
     print("\n    ", end="")
     print("Press Key to select an option... > ", end="")
     ESC.SetForeGround(ESC.Solarized16.Orange)
     print(" ", end="", flush=True)  
     ESC.CursorLeft(1)
+
+def GetRemark():
+    print("\n\n")
+    ESC.ResetForeGround()
+    return input("    Input Remark > ")
+
+def AddToPOI(user, comment, rating, remark):
+    with open('poi.csv', 'a', newline='') as f:
+        writer = csv.writer(f)
+        writer.writerow([user, comment, rating, remark])
 
 folder = ""
 # Get command line arguments
@@ -185,18 +203,29 @@ with open('comments.csv', 'r') as f:
                 saveComment = 0
                 remark = ""
 
+                # OK
                 if pressedKey == "I":
-                    print("\n\n")
-                    ESC.ResetForeGround()
-                    remark = input("    Input Remark > ")
+                    remark = GetRemark()
                     pressedKey = "i"
-
                 if pressedKey == "i":
-                    # Comment OK & Contact User - Add to poi.csv
-                    with open('poi.csv', 'a', newline='') as f:
-                        writer = csv.writer(f)
-                        writer.writerow([user[0], comment[0], 1, remark])
+                    AddToPOI(user[0], comment[0], 1, remark)
                     pressedKey = " "
+                
+                # WARNING
+                if pressedKey == "/":
+                    remark = GetRemark()
+                    pressedKey = "_"
+                if pressedKey == "_":
+                    AddToPOI(user[0], comment[0], 2, remark)
+                    pressedKey = "-"
+
+                # CRITICAL
+                if pressedKey == "*":
+                    remark = GetRemark()
+                    pressedKey = "#"
+                if pressedKey == "#":
+                    AddToPOI(user[0], comment[0], 3, remark)
+                    pressedKey = "+"
 
                 if pressedKey == "o":
                     # User OK

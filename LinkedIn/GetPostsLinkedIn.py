@@ -145,7 +145,7 @@ os.system('python3 FileInit.py')
 
 ESC.CLS()
 ESC.CursorRight(2)
-MEN.PrintRainbow("H a t e G u a r d - GetPostsLinkeIn.py")
+MEN.PrintRainbow("H a t e G u a r d - GetPostsLinkedIn.py")
 print("\n")
 
 

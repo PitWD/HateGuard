@@ -36,15 +36,25 @@ def PrintMainMenu():
 
     MEN.PrintMenuPos('t', "Do Xitter Rating", ESC.Solarized16.Base01, ESC.Solarized16.Base01)
     ESC.CursorUp(1)
-    MEN.PrintMenuPos('T', "Do Xitter Scraping",ESC.Solarized16.Base01,ESC.Solarized16.Base01, 40)
+    MEN.PrintMenuPos('T', "Do Xitter Scraping",ESC.Solarized16.Base01, ESC.Solarized16.Base01, 40)
 
     MEN.PrintMenuPos('f', "Do Facebook Rating", ESC.Solarized16.Base01, ESC.Solarized16.Base01)
     ESC.CursorUp(1)
-    MEN.PrintMenuPos('F', "Do Facebook Scraping",ESC.Solarized16.Base01,ESC.Solarized16.Base01, 40)
+    MEN.PrintMenuPos('F', "Do Facebook Scraping",ESC.Solarized16.Base01, ESC.Solarized16.Base01, 40)
 
     MEN.PrintMenuPos('i', "Do Instagram Rating", ESC.Solarized16.Base01, ESC.Solarized16.Base01)
     ESC.CursorUp(1)
-    MEN.PrintMenuPos('I', "Do Instagram Scraping",ESC.Solarized16.Base01,ESC.Solarized16.Base01, 40)
+    MEN.PrintMenuPos('I', "Do Instagram Scraping",ESC.Solarized16.Base01, ESC.Solarized16.Base01, 40)
+
+    print("")
+
+    MEN.PrintMenuPos('p', "Do LinkedIn POI View")
+    ESC.CursorUp(1)
+    MEN.PrintMenuPos('x', "Do Xitter POI View", ESC.Solarized16.Base01, ESC.Solarized16.Base01, 40)
+    
+    MEN.PrintMenuPos('b', "Do Facebook POI View", ESC.Solarized16.Base01, ESC.Solarized16.Base01)
+    ESC.CursorUp(1)
+    MEN.PrintMenuPos('g', "Do Instagram POI View", ESC.Solarized16.Base01, ESC.Solarized16.Base01, 40)
 
     print("\n    ", end="")
     print("Press Key to select an option... > ", end="")
@@ -89,6 +99,18 @@ while pressedKey != "q":
         pass
     elif pressedKey == " ":
         pressedKey = ""
+    elif pressedKey == "p":
+        # Do LinkedIn POI View
+        pass
+    elif pressedKey == "x":
+        # Do Xitter POI View
+        pass
+    elif pressedKey == "b":
+        # Do Facebook POI View
+        pass
+    elif pressedKey == "g":
+        # Do Instagram POI View
+        pass
 
     # wait 0.1 seconds
     time.sleep(0.1)

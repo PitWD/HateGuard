@@ -46,6 +46,7 @@ def PrintMenu():
     print(" ", end="", flush=True)  
     ESC.CursorLeft(1)
 
+folder = ""
 # Get command line arguments
 argCount = len(sys.argv)
 for i in range(1, argCount):
@@ -65,7 +66,7 @@ for i in range(1, argCount):
             time.sleep(3)
             sys.exit(1)
 
-# Open comments.csv and iterate backwards through all comments
+# Open comments.csv and iterate backwards (newest 1st) through all comments
 with open('comments.csv', 'r') as f:
     reader = csv.reader(f)
     comments = list(reader)
@@ -75,6 +76,7 @@ with open('comments.csv', 'r') as f:
         commentFile = ""
         parentFile = ""
         commentDate = comment[4]
+        commentRating = int(comment[1])
 
         # Find user of comment
         with open('users.csv', 'r') as f:
@@ -89,7 +91,7 @@ with open('comments.csv', 'r') as f:
                     break
 
         # Check, if comment is unrated and user is not rated as OK
-        if (comment[1] == "0" or comment[1] == 0) and (userRating != 1):
+        if not commentRating and userRating != 1:
             # Open comment file
             with open('comments/' + comment[0] + '.txt', 'r') as f:
                 commentFile = f.read()
@@ -126,9 +128,15 @@ with open('comments.csv', 'r') as f:
                     with open('comments/' + comment2[3] + '.txt', 'r') as f:
                         postFile = f.read()
 
-            # Print Post History
+            #Print Header
             ESC.CLS()
+            ESC.CursorRight(2)
+            MEN.PrintRainbow("H a t e G u a r d - Rating-CLI")
+            print(" 4 ("+ folder + ") on comment: ", end="")
+            ESC.SetForeGround(ESC.Solarized16.Base2)
+            print(comment[0])
             print("")
+            # Print Post History
             if postFile != "":
                 ESC.SetForeGround(ESC.Solarized16.Base01)
                 postFile = ESC.BreakLines(postFile, 60)

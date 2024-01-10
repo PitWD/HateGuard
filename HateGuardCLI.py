@@ -13,6 +13,7 @@ def PrintMainMenu():
     ESC.CLS()
 
     ESC.TxtBold(True)
+    ESC.CursorRight(2)
     MEN.PrintRainbow("H a t e G u a r d - C L I")
 
     ESC.TxtBold(False)

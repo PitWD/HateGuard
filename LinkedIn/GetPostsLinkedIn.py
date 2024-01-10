@@ -15,6 +15,7 @@ import datetime
 import sys
 sys.path.append('..')
 import ESC
+import MEN
 
 cLight = 37
 cGrey = 92
@@ -143,7 +144,10 @@ ESC.CLS()
 os.system('python3 FileInit.py')
 
 ESC.CLS()
-print ("    Scrap Posts from LinkedIn\n")
+ESC.CursorRight(2)
+MEN.PrintRainbow("H a t e G u a r d - GetPostsLinkeIn.py")
+print("\n")
+
 
 # Get username and password from secret.json
 with open('secret.json', 'r') as f:
@@ -155,6 +159,8 @@ with open('secret.json', 'r') as f:
 with open('settings.json', 'r') as f:
     data = json.load(f)
     user2scrap = data['user2scrap']
+
+print ("    Scrape Posts from LinkedIn\n")
 
 # Import LinkedIn API
 from linkedin_api import Linkedin

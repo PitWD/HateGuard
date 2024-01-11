@@ -164,16 +164,43 @@ print ("    Scrape Posts from LinkedIn\n")
 
 # Import LinkedIn API
 from linkedin_api import Linkedin
+import linkedin_api.settings as api_dirs
+
 
 # Create LinkedIn object
 api = Linkedin(username, password)
 
+cookieFile = api_dirs.COOKIE_PATH + username + '.jr'
+
 print ("    API connected: " + str(api))
-print ("    Scraping user: " + user2scrap + "\n") 
+print ("    Scraping user: " + user2scrap)
+print ("      Cookie file: " + cookieFile + "\n")  
 
-# Get the x most recent posts of user2scrap
-posts = api.get_profile_posts(public_id=user2scrap, post_count=10)
-
+try:
+    # Get the x most recent posts of user2scrap
+    posts = api.get_profile_posts(public_id=user2scrap, post_count=10)
+except:
+    ESC.SetForeGround(cRed)
+    print("\n\n*******************************")
+    print("Error: Broken get_profile_posts")
+    print("The cookie file might be broken")
+    print("Cookie gets deleted............")
+    # Delete cookie file
+    try:
+        os.remove(cookieFile)
+    except:
+        pass
+    print("*******************************\n\n")
+    ESC.ResetForeGround()
+    print("\n\n")
+    
+    print("Retry to login and get posts...")
+    try:
+        api = Linkedin(username, password)
+        posts = api.get_profile_posts(public_id=user2scrap, post_count=10)
+    except:
+        sys.exit("Error: Can't login to LinkedIn")
+        
 # Iterate over posts
 for post in posts:
 

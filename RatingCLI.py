@@ -47,12 +47,62 @@ def PrintMenu():
     ESC.CursorUp(1)
     MEN.PrintMenuPos('*', "CRIT & POI & Rem.", ESC.Solarized16.Red, None, 55)
 
-    MEN.PrintMenuPos('  q  ', "QUIT processing")
+    MEN.PrintMenuPos('  F  ', "Full Text Len", ESC.Solarized16.Blue)
+    ESC.CursorUp(1)
+    MEN.PrintMenuPos('q', "QUIT processing", None, None, 32)
+
     print("\n    ", end="")
     print("Press Key to select an option... > ", end="")
     ESC.SetForeGround(ESC.Solarized16.Orange)
     print(" ", end="", flush=True)  
     ESC.CursorLeft(1)
+
+def PrintPrePosts(postFile, parentFile, textLen):
+    #Print Header and Post History
+    ESC.CLS()
+    ESC.CursorRight(2)
+    MEN.PrintRainbow("H a t e G u a r d - Rating-CLI")
+    print(" 4 ("+ folder + ") on comment: ", end="")
+    ESC.SetForeGround(ESC.Solarized16.Base2)
+    print(comment[0])
+    print("")
+    # Print Post History
+    if postFile != "":
+        ESC.SetForeGround(ESC.Solarized16.Base01)
+        postFile = ESC.BreakLines(postFile, 60)
+        ESC.PrintLines(postFile, 19, 5)
+
+    if parentFile != "":
+        ESC.SetForeGround(ESC.Solarized16.Base0)
+        parentFile = ESC.BreakLines(parentFile, 60)
+        ESC.PrintLines(parentFile, 10, textLen)
+
+def PrintUserPost(commentFile, userName, userRating, userOccupation, userCompany, commentDate):
+    # Print User Infos
+    ESC.SetForeGround(ESC.Solarized16.Base1)
+    ESC.TxtBold(1)
+    ESC.CursorRight(2)
+    print(userName, end="")
+    ESC.TxtBold(0)
+    print(" (", end="")
+    PrintRating(userRating) 
+    ESC.SetForeGround(ESC.Solarized16.Base1)
+    print(")")
+    ESC.SetForeGround(ESC.Solarized16.Base01)
+    userOccupation = ESC.BreakLines(userOccupation, 60)
+    ESC.PrintLines(userOccupation, 2, 1)
+    ESC.PrintLines(userCompany, 2, 1)
+    ESC.TxtBold(1)
+    ESC.CursorRight(2)
+    print(commentDate)
+    ESC.TxtBold(0)
+    
+    # Print Comment
+    ESC.SetForeGround(ESC.Solarized16.Base2)
+    commentFile = ESC.BreakLines(commentFile, 60)
+    ESC.PrintLines(commentFile, 2)
+    ESC.ResetForeGround()
+
 
 def GetRemark():
     print("\n\n")
@@ -88,6 +138,7 @@ for i in range(1, argCount):
 with open('comments.csv', 'r') as f:
     reader = csv.reader(f)
     comments = list(reader)
+    textLen = 7
 
     for comment in reversed(comments):
         postFile = ""
@@ -146,134 +197,103 @@ with open('comments.csv', 'r') as f:
                     with open('comments/' + comment2[3] + '.txt', 'r') as f:
                         postFile = f.read()
 
-            #Print Header
-            ESC.CLS()
-            ESC.CursorRight(2)
-            MEN.PrintRainbow("H a t e G u a r d - Rating-CLI")
-            print(" 4 ("+ folder + ") on comment: ", end="")
-            ESC.SetForeGround(ESC.Solarized16.Base2)
-            print(comment[0])
-            print("")
-            # Print Post History
-            if postFile != "":
-                ESC.SetForeGround(ESC.Solarized16.Base01)
-                postFile = ESC.BreakLines(postFile, 60)
-                ESC.PrintLines(postFile, 19, 5)
 
-            if parentFile != "":
-                ESC.SetForeGround(ESC.Solarized16.Base0)
-                parentFile = ESC.BreakLines(parentFile, 60)
-                ESC.PrintLines(parentFile, 10, 7)
-
-            # Print User Infos
-            ESC.SetForeGround(ESC.Solarized16.Base1)
-            ESC.TxtBold(1)
-            ESC.CursorRight(2)
-            print(userName, end="")
-            ESC.TxtBold(0)
-            print(" (", end="")
-            PrintRating(userRating) 
-            ESC.SetForeGround(ESC.Solarized16.Base1)
-            print(")")
-            ESC.SetForeGround(ESC.Solarized16.Base01)
-            userOccupation = ESC.BreakLines(userOccupation, 60)
-            ESC.PrintLines(userOccupation, 2, 1)
-            ESC.PrintLines(userCompany, 2, 1)
-            ESC.TxtBold(1)
-            ESC.CursorRight(2)
-            print(commentDate)
-            ESC.TxtBold(0)
-            
-            # Print Comment
-            ESC.SetForeGround(ESC.Solarized16.Base2)
-            commentFile = ESC.BreakLines(commentFile, 60)
-            ESC.PrintLines(commentFile, 2)
-            ESC.ResetForeGround()
-
-            # Print Menu
-            PrintMenu()
-
-            # Get Key
             pressedKey = ""
-            saveUser = 0
-            saveComment = 0
-            while pressedKey != "q":
-                pressedKey = ESC.GetKey()
+            while pressedKey == "": # For 2nd view vie menu 'F'
+                
+                #Print Header and Post History
+                PrintPrePosts(postFile, parentFile, textLen)
+                # Print User Infos
+                PrintUserPost(commentFile, userName, userRating, userOccupation, userCompany, commentDate)
+                # Print Menu
+                PrintMenu()
+
+                # Get Key
                 saveUser = 0
                 saveComment = 0
-                remark = ""
+                textLen = 7 
 
-                # OK
-                if pressedKey == "I":
-                    remark = GetRemark()
-                    pressedKey = "i"
-                if pressedKey == "i":
-                    AddToPOI(user[0], comment[0], 1, remark)
-                    pressedKey = " "
-                
-                # WARNING
-                if pressedKey == "/":
-                    remark = GetRemark()
-                    pressedKey = "_"
-                if pressedKey == "_":
-                    AddToPOI(user[0], comment[0], 2, remark)
-                    pressedKey = "-"
+                while pressedKey != "q":
+                    pressedKey = ESC.GetKey()
+                    saveUser = 0
+                    saveComment = 0
+                    remark = ""
 
-                # CRITICAL
-                if pressedKey == "*":
-                    remark = GetRemark()
-                    pressedKey = "#"
-                if pressedKey == "#":
-                    AddToPOI(user[0], comment[0], 3, remark)
-                    pressedKey = "+"
+                    # OK
+                    if pressedKey == "I":
+                        remark = GetRemark()
+                        pressedKey = "i"
+                    if pressedKey == "i":
+                        AddToPOI(user[0], comment[0], 1, remark)
+                        pressedKey = " "
+                    
+                    # WARNING
+                    if pressedKey == "/":
+                        remark = GetRemark()
+                        pressedKey = "_"
+                    if pressedKey == "_":
+                        AddToPOI(user[0], comment[0], 2, remark)
+                        pressedKey = "-"
 
-                if pressedKey == "o":
-                    # User OK
-                    user[4] = 1
-                    saveUser = 1
-                elif pressedKey == "w":
-                    # User WARNING
-                    user[4] = 2
-                    saveUser = 1    
-                elif pressedKey == "c":
-                    # User CRITICAL
-                    user[4] = 3
-                    saveUser = 1
-                elif pressedKey == " ":
-                    # Comment OK
-                    comment[1] = 1
-                    saveComment = 1
-                elif pressedKey == "-":
-                    # Comment WARNING
-                    comment[1] = 2
-                    saveComment = 1
-                elif pressedKey == "+":
-                    # Comment CRITICAL
-                    comment[1] = 3
-                    saveComment = 1
+                    # CRITICAL
+                    if pressedKey == "*":
+                        remark = GetRemark()
+                        pressedKey = "#"
+                    if pressedKey == "#":
+                        AddToPOI(user[0], comment[0], 3, remark)
+                        pressedKey = "+"
 
-                if saveUser == 1:
-                    # Update users.csv
-                    with open('users.csv', 'w', newline='') as f:
-                        writer = csv.writer(f)
-                        writer.writerows(users)
-                elif saveComment == 1:
-                    # Update comments.csv
-                    with open('comments.csv', 'w', newline='') as f:
-                        #commentsTmp = comments.reverse()
-                        writer = csv.writer(f)
-                        writer.writerows(comments)
-                    pressedKey = " "
-                        
-                if pressedKey == " ":
-                    # Leave Menu - next comment
-                    break
-                elif pressedKey != "" and pressedKey != "q":
-                    # Refresh Menu
-                    ESC.FixEcho()
+                    if pressedKey == "o":
+                        # User OK
+                        user[4] = 1
+                        saveUser = 1
+                    elif pressedKey == "w":
+                        # User WARNING
+                        user[4] = 2
+                        saveUser = 1    
+                    elif pressedKey == "c":
+                        # User CRITICAL
+                        user[4] = 3
+                        saveUser = 1
+                    elif pressedKey == " ":
+                        # Comment OK
+                        comment[1] = 1
+                        saveComment = 1
+                    elif pressedKey == "-":
+                        # Comment WARNING
+                        comment[1] = 2
+                        saveComment = 1
+                    elif pressedKey == "+":
+                        # Comment CRITICAL
+                        comment[1] = 3
+                        saveComment = 1
+                    elif pressedKey == "F":
+                        # Full Text Length
+                        textLen = 0
+                        pressedKey = ""
+                        ESC.FixEcho()
+                        break
+                    if saveUser == 1:
+                        # Update users.csv
+                        with open('users.csv', 'w', newline='') as f:
+                            writer = csv.writer(f)
+                            writer.writerows(users)
+                    elif saveComment == 1:
+                        # Update comments.csv
+                        with open('comments.csv', 'w', newline='') as f:
+                            #commentsTmp = comments.reverse()
+                            writer = csv.writer(f)
+                            writer.writerows(comments)
+                        pressedKey = " "
+                            
+                    if pressedKey == " ":
+                        # Leave Menu - next comment
+                        break
+                    elif pressedKey != "" and pressedKey != "q":
+                        # Refresh Menu
+                        ESC.FixEcho()
 
-                time.sleep(0.1)
-
+                    time.sleep(0.1)
             if pressedKey == "q":
                 # Quit processing
                 os.chdir('..')

@@ -40,7 +40,7 @@ def print_dict(d, indent=0, color = cGreen):
 
 
 # open json file 'comments.json'
-with open('LinkedIn/debug/comment_10_1.json', 'r') as f:
+with open('LinkedIn/debug/comment_2_6.json', 'r') as f:
     data = json.load(f)
 
 print("\n\n")

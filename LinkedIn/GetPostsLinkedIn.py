@@ -55,6 +55,15 @@ def print_dict(d, indent=0, color = cGreen):
         print(d)
     ESC.ResetForeGround()
 
+def PrintActorError(errorFile):
+    ESC.SetForeGround(cRed)
+    print("\n\n*******************************")
+    print("Error: Broken feed.Actor")
+    print(errorFile)
+    print("*******************************\n\n")
+    ESC.ResetForeGround()
+    print("\n\n")
+
 def extract_integer_and_identifier(s):
     # LinkedIn's postDate is a string like '1w • Edited •'
     match = re.match(r'^(\d+)(\D+)', s)
@@ -178,7 +187,7 @@ print ("      Cookie file: " + cookieFile + "\n")
 
 #user = api.get_profile(public_id=user2scrap)
 #print_dict(user)
-sys.exit(1)
+#sys.exit(1)
 
 try:
     # Get the x most recent posts of user2scrap
@@ -289,47 +298,52 @@ for post in posts:
                 with open('debug/comment_'+str(postCnt)+'_'+str(commentCnt)+'.json', 'w') as f:
                     json.dump(comment, f)   
 
-            commenterType = 'com.linkedin.voyager.feed.MemberActor'
+            typeActor = 'com.linkedin.voyager.feed.MemberActor'
+            typeProfile = 'miniProfile'
 
             try:
-                firstName = comment['commenter'][commenterType]['miniProfile']['firstName']
+                firstName = comment['commenter'][typeActor][typeProfile]['firstName']
             except:
-                commenterType = 'com.linkedin.voyager.feed.InfluencerActor'
-            try:
-                firstName = comment['commenter'][commenterType]['miniProfile']['firstName']
-            except:
-                if debug_level > 0:
-                    ESC.SetForeGround(cRed)
-                    print("\n\n****************************")
-                    print("New/Unknown feed.???Actor")
-                    print('comment_'+str(postCnt)+'_'+str(commentCnt)+'.json')
-                    print("****************************")
-                    ESC.ResetForeGround()
-                    print("\n\n")
-                    # Script will crash now...
+                # Influencer
+                typeActor = 'com.linkedin.voyager.feed.InfluencerActor'
+                try:
+                    firstName = comment['commenter'][typeActor][typeProfile]['firstName']
+                except:
+                    # Company
+                    typeActor = 'com.linkedin.voyager.feed.CompanyActor'
+                    typeProfile = 'miniCompany'
+                    try:
+                        lastName = comment['commenter'][typeActor][typeProfile]['name']
+                        firstName = 'Company'
+                        occupation = 'Company'
+                    except:
+                        PrintActorError('comment_'+str(postCnt)+'_'+str(commentCnt)+'.json')
+                        # Script will crash now... but where exactly, is important to know!
 
-            firstName = comment['commenter'][commenterType]['miniProfile']['firstName']
-            lastName = comment['commenter'][commenterType]['miniProfile']['lastName']
-            nickName = comment['commenter'][commenterType]['miniProfile']['publicIdentifier']
-            commenterID = comment['commenter'][commenterType]['miniProfile']['objectUrn']
-            
+            if typeProfile == 'miniCompany':
+                nickName = comment['commenter'][typeActor][typeProfile]['universalName']
+                userLink = 'https://www.linkedin.com/company/' + nickName + '/'
+            else:
+                firstName = comment['commenter'][typeActor][typeProfile]['firstName']
+                lastName = comment['commenter'][typeActor][typeProfile]['lastName']
+                nickName = comment['commenter'][typeActor][typeProfile]['publicIdentifier']
+                occupation = comment['commenter'][typeActor][typeProfile]['occupation']
+                userLink = 'https://www.linkedin.com/in/' + nickName + '/'
+
+            commenterID = comment['commenter'][typeActor][typeProfile]['objectUrn']
             # Remove non-numeric parts in front of the ID
             commenterID = re.findall(r'\d+', commenterID)[0]
 
             commentID = fix_commentID(comment['dashEntityUrn'])
-            
             parentID = postID
-            occupation = comment['commenter'][commenterType]['miniProfile']['occupation']
-            try:
-                picture = comment['commenter'][commenterType]['miniProfile']['picture']['com.linkedin.common.VectorImage']['rootUrl'] + comment['commenter']['com.linkedin.voyager.feed.MemberActor']['miniProfile']['picture']['com.linkedin.common.VectorImage']['artifacts'][0]['fileIdentifyingUrlPathSegment']
-            except:
-                picture = "N/A"
+
+            # We do pictures when we have the crawling license...
+            picture = "N/A"
 
             timeStamp = get_comment_timestamp(comment['createdTime'])
             commentText = comment['commentV2']['text']
             permaLink = comment['permalink']
 
-            userLink = 'https://www.linkedin.com/in/' + nickName + '/'
 
             if debug_level > 0:
                 print("\n\n")
@@ -363,63 +377,70 @@ for post in posts:
                         with open('debug/moreComment_'+str(postCnt)+'_'+str(commentCnt)+'_'+str(moreCommentCnt)+'.json', 'w') as f:
                             json.dump(moreComment, f)   
 
+                    parentID = commentID
+
+                    timeStamp = get_comment_timestamp(moreComment['createdTime'])
+                    commentText = moreComment['commentV2']['text']
+                    permaLink = moreComment['permalink']
+                    commentID2 = fix_commentID(moreComment['dashEntityUrn'])
+                
+                    # Extract most user-info from encapsulated dict
+                    user = moreComment['commenterForDashConversion']['image']['attributes']
+                    # Remove leading and trailing '[' and ']' if they exist
+                    user = str(user).strip('[]')
+                    # Make dict from string
+                    user = ast.literal_eval(user)
+
+                    typeProfile = 'miniProfile'
+
                     try:
-
-                        parentID = commentID
-
-                        timeStamp = get_comment_timestamp(moreComment['createdTime'])
-                        commentText = moreComment['commentV2']['text']
-                        permaLink = moreComment['permalink']
-
-                        commentID2 = fix_commentID(moreComment['dashEntityUrn'])
-                    
-                        # Extract most user-info from encapsulated dict
-                        user = moreComment['commenterForDashConversion']['image']['attributes']
-                        # Remove leading and trailing '[' and ']' if they exist
-                        user = str(user).strip('[]')
-                        # Make dict from string
-                        user = ast.literal_eval(user)
-
-                        firstName = user['miniProfile']['firstName']
-                        lastName = user['miniProfile']['lastName']
-                        nickName = user['miniProfile']['publicIdentifier']
-                        commenterID = user['miniProfile']['objectUrn']
-                        commenterID = re.findall(r'\d+', commenterID)[0]
-                        occupation = user['miniProfile']['occupation']
-                        try:
-                            picture = user['miniProfile']['picture']['com.linkedin.common.VectorImage']['rootUrl'] + user['miniProfile']['picture']['com.linkedin.common.VectorImage']['artifacts'][0]['fileIdentifyingUrlPathSegment']
-                        except:
-                            picture = "N/A"
-
-                        if debug_level > 0:
-                            print('moreComment_'+str(postCnt)+'_'+str(commentCnt)+'_'+str(moreCommentCnt)+'.json')
-
-                            ESC.SetForeGround(cAqua)
-                            # print("\n\n")
-
-                            print(firstName + " " + lastName + " (" + nickName + ") [" + commenterID + "]")
-                            print(occupation)
-                            print(parentID + " -> " + commentID2)
-                            print(timeStamp)
-                            ESC.SetForeGround(cDark)
-                            print(commentText + "\n\n")
-
-                        user_to_users(commenterID, firstName, lastName, nickName, occupation, userLink, picture)
-                        comment_to_comments(commentID2, commenterID, parentID, timeStamp, permaLink, commentText)
-
+                        firstName = user[typeProfile]['firstName']
                     except:
-                        if debug_level > 0:
-                            ESC.SetForeGround(cRed)
-                            print("\n\n*************************")
-                            print("Error: Broken moreComment")
-                            print('moreComment_'+str(postCnt)+'_'+str(commentCnt)+'_'+str(moreCommentCnt)+'.json')
-                            print("*************************\n\n")
-                            ESC.ResetForeGround()
-                            print("\n\n")
-                            if debug_level > 1:
-                                print_dict(moreComment)
-                                print("\n\n")
-                        pass
+                        # Influencer
+                        typeProfile = 'miniInfluencer'
+                        try:
+                            firstName = user[typeProfile]['firstName']
+                        except:
+                            # Company
+                            typeProfile = 'miniCompany'
+                            try:
+                                lastName = user[typeProfile]['name']
+                                firstName = 'Company'
+                                occupation = 'Company'
+                            except:
+                                PrintActorError('moreComment_'+str(postCnt)+'_'+str(commentCnt)+'_'+str(moreCommentCnt)+'.json')
+                                # Script will crash now... but where exactly, is important to know!
+
+                    if typeProfile == 'miniCompany':                    
+                        nickName = user[typeProfile]['universalName']
+                        userLink = 'https://www.linkedin.com/company/' + nickName + '/'
+                    else:
+                        lastName = user[typeProfile]['lastName']
+                        nickName = user[typeProfile]['publicIdentifier']
+                        occupation = user[typeProfile]['occupation']
+                    
+                    commenterID = user[typeProfile]['objectUrn']
+                    commenterID = re.findall(r'\d+', commenterID)[0]
+
+                    # We do pictures when we have the crawling license...
+                    picture = "N/A"
+
+                    if debug_level > 0:
+                        print('moreComment_'+str(postCnt)+'_'+str(commentCnt)+'_'+str(moreCommentCnt)+'.json')
+
+                        ESC.SetForeGround(cAqua)
+                        # print("\n\n")
+
+                        print(firstName + " " + lastName + " (" + nickName + ") [" + commenterID + "]")
+                        print(occupation)
+                        print(parentID + " -> " + commentID2)
+                        print(timeStamp)
+                        ESC.SetForeGround(cDark)
+                        print(commentText + "\n\n")
+
+                    user_to_users(commenterID, firstName, lastName, nickName, occupation, userLink, picture)
+                    comment_to_comments(commentID2, commenterID, parentID, timeStamp, permaLink, commentText)
+
 
 '''
             print(" cookie: ", cookie.name)
@@ -433,6 +454,9 @@ for post in posts:
             print("expires: ", expires)
             print("   _now: ", now)
             print("")
+
+SELECT a12 CASE WHEN a12 LIKE 'https:%' THEN 'N/A' ELSE a12 
+
 '''
         
 # End of GetPostsLinkedIn.py

@@ -101,7 +101,7 @@ def get_comment_timestamp(timeStamp):
     timeStamp = datetime.datetime.fromtimestamp(timeStamp).strftime("%d.%m.%Y %H:%M:%S")
     return timeStamp
 
-def user_to_users(commenterID, firstName, lastName, nickName, occupation, userLink, picture):
+def user_to_users(commenterID, firstName, lastName, nickName, occupation, userLink, company, picture):
     # Check if user.csv already contains commenterID on field 'id'
     userExist = 0
     with open('users.csv', 'r') as f:
@@ -115,7 +115,7 @@ def user_to_users(commenterID, firstName, lastName, nickName, occupation, userLi
     if not userExist:
         with open('users.csv', 'a', newline='') as f:
             writer = csv.writer(f)
-            writer.writerow([commenterID, firstName, lastName, nickName, "0", "N/A", "N/A", "N/A", "N/A", occupation, userLink,picture])
+            writer.writerow([commenterID, firstName, lastName, nickName, "0", "N/A", "N/A", "N/A", company, occupation, userLink,picture])
     return userExist
 
 def comment_to_comments(commentID, commenterID, parentID, timeStamp, permaLink, commentText):
@@ -300,6 +300,7 @@ for post in posts:
 
             typeActor = 'com.linkedin.voyager.feed.MemberActor'
             typeProfile = 'miniProfile'
+            company = "N/A"
 
             try:
                 firstName = comment['commenter'][typeActor][typeProfile]['firstName']
@@ -308,6 +309,7 @@ for post in posts:
                 typeActor = 'com.linkedin.voyager.feed.InfluencerActor'
                 try:
                     firstName = comment['commenter'][typeActor][typeProfile]['firstName']
+                    company = "Influencer"
                 except:
                     # Company
                     typeActor = 'com.linkedin.voyager.feed.CompanyActor'
@@ -316,6 +318,7 @@ for post in posts:
                         lastName = comment['commenter'][typeActor][typeProfile]['name']
                         firstName = 'Company'
                         occupation = 'Company'
+                        company = lastName
                     except:
                         PrintActorError('comment_'+str(postCnt)+'_'+str(commentCnt)+'.json')
                         # Script will crash now... but where exactly, is important to know!
@@ -356,7 +359,7 @@ for post in posts:
                 ESC.SetForeGround(cDark)
                 print(commentText + "\n\n")
 
-            user_to_users(commenterID, firstName, lastName, nickName, occupation, userLink, picture)
+            user_to_users(commenterID, firstName, lastName, nickName, occupation, userLink, company, picture)
             comment_to_comments(commentID, commenterID, parentID, timeStamp, permaLink, commentText)
 
             # Get more comments
@@ -392,6 +395,7 @@ for post in posts:
                     user = ast.literal_eval(user)
 
                     typeProfile = 'miniProfile'
+                    company = "N/A"
 
                     try:
                         firstName = user[typeProfile]['firstName']
@@ -400,6 +404,7 @@ for post in posts:
                         typeProfile = 'miniInfluencer'
                         try:
                             firstName = user[typeProfile]['firstName']
+                            company = "Influencer"
                         except:
                             # Company
                             typeProfile = 'miniCompany'
@@ -407,6 +412,7 @@ for post in posts:
                                 lastName = user[typeProfile]['name']
                                 firstName = 'Company'
                                 occupation = 'Company'
+                                company = lastName
                             except:
                                 PrintActorError('moreComment_'+str(postCnt)+'_'+str(commentCnt)+'_'+str(moreCommentCnt)+'.json')
                                 # Script will crash now... but where exactly, is important to know!
@@ -438,7 +444,7 @@ for post in posts:
                         ESC.SetForeGround(cDark)
                         print(commentText + "\n\n")
 
-                    user_to_users(commenterID, firstName, lastName, nickName, occupation, userLink, picture)
+                    user_to_users(commenterID, firstName, lastName, nickName, occupation, userLink, company, picture)
                     comment_to_comments(commentID2, commenterID, parentID, timeStamp, permaLink, commentText)
 
 

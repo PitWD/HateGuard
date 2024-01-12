@@ -176,6 +176,10 @@ print ("    API connected: " + str(api))
 print ("    Scraping user: " + user2scrap)
 print ("      Cookie file: " + cookieFile + "\n")  
 
+#user = api.get_profile(public_id=user2scrap)
+#print_dict(user)
+sys.exit(1)
+
 try:
     # Get the x most recent posts of user2scrap
     posts = api.get_profile_posts(public_id=user2scrap, post_count=10)
@@ -200,7 +204,7 @@ except:
         posts = api.get_profile_posts(public_id=user2scrap, post_count=10)
     except:
         sys.exit("Error: Can't login to LinkedIn")
-        
+
 # Iterate over posts
 for post in posts:
 
@@ -417,7 +421,19 @@ for post in posts:
                                 print("\n\n")
                         pass
 
-
+'''
+            print(" cookie: ", cookie.name)
+            try:
+                expires = int(cookie.expires)
+                expires = datetime.datetime.fromtimestamp(expires).strftime('%d.%m.%Y %H:%M:%S')
+                now = datetime.datetime.fromtimestamp(int(_now)).strftime('%d.%m.%Y %H:%M:%S')
+            except:
+                expires = "None"
+                now = "None"
+            print("expires: ", expires)
+            print("   _now: ", now)
+            print("")
+'''
         
 # End of GetPostsLinkedIn.py
 

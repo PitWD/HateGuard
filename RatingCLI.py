@@ -26,11 +26,11 @@ def PrintRating(rating):
 
 def PrintMenu():
     print("")
-    MEN.PrintMenuPos('  o  ', "User OK")
+    MEN.PrintMenuPos('  o  ', "User OK", ESC.Solarized16.Green)
     ESC.CursorUp(1) 
-    MEN.PrintMenuPos('w', "User WARNING", None, None, 32)
+    MEN.PrintMenuPos('w', "User WARNING", ESC.Solarized16.Yellow , None, 32)
     ESC.CursorUp(1)
-    MEN.PrintMenuPos('c', "User CRITICAL", None, None, 55)
+    MEN.PrintMenuPos('c', "User CRITICAL", ESC.Solarized16.Red, None, 55)
     MEN.PrintMenuPos('space', "Comment OK", ESC.Solarized16.Green)
     ESC.CursorUp(1)
     MEN.PrintMenuPos('i', "OK & POI", ESC.Solarized16.Green, None, 32)

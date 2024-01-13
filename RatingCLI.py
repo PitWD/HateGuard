@@ -144,8 +144,13 @@ with open('comments.csv', 'r') as f:
         postFile = ""
         commentFile = ""
         parentFile = ""
+        
+        try:    # if int(comment[1]) fails, we are done with comments... 
+            commentRating = int(comment[1])
+        except:
+            break
+
         commentDate = comment[4]
-        commentRating = int(comment[1])
 
         # Find user of comment
         with open('users.csv', 'r') as f:

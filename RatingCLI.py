@@ -135,6 +135,7 @@ for i in range(1, argCount):
             sys.exit(1)
 
 # Open comments.csv and iterate backwards (newest 1st) through all comments
+os.system('stty -echo')
 with open('comments.csv', 'r') as f:
     reader = csv.reader(f)
     comments = list(reader)
@@ -276,7 +277,6 @@ with open('comments.csv', 'r') as f:
                         # Full Text Length
                         textLen = 0
                         pressedKey = ""
-                        ESC.FixEcho()
                         break
                     if saveUser == 1:
                         # Update users.csv
@@ -294,15 +294,13 @@ with open('comments.csv', 'r') as f:
                     if pressedKey == " ":
                         # Leave Menu - next comment
                         break
-                    elif pressedKey != "" and pressedKey != "q":
-                        # Refresh Menu
-                        ESC.FixEcho()
 
                     time.sleep(0.1)
             if pressedKey == "q":
                 # Quit processing
                 os.chdir('..')
                 break
+os.system('stty echo')
 
 
 

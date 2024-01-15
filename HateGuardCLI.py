@@ -62,6 +62,7 @@ def PrintMainMenu():
     print(" ", end="", flush=True)  
     ESC.CursorLeft(1)
 
+os.system('stty -echo')
 PrintMainMenu()
 pressedKey = ""
 while pressedKey != "q":
@@ -113,13 +114,13 @@ while pressedKey != "q":
         pass
 
     # wait 0.1 seconds
-    time.sleep(0.1)
+    time.sleep(0.05)
     if pressedKey == " ":
         # We did something, so we need to refresh the screen
         PrintMainMenu()
-    elif pressedKey != "" and pressedKey != "q":
-        ESC.FixEcho()
+
 ESC.ResetForeGround()
 print("\n\n")
+os.system('stty echo')
 
 

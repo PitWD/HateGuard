@@ -1,5 +1,6 @@
 import os
-import sys, termios, fcntl      # GetKey
+import sys, termios
+import time
 
 class ForeGroundColor:
     Black = 30
@@ -173,6 +174,8 @@ def KeyToFunction(key):
         '\x1b[1;5F':'Ctrl-End',
         '\x1b[1;5H':'Ctrl-Home',
         '\x7F': 'Back',
+        '\x08': 'Back',
+        '\x1b\x08': 'Alt-Back',
         '\x1b[3~': 'Del',
         '\x1b[2~': 'Ins',
         '\x1b[5~': 'PgUp',
@@ -262,15 +265,15 @@ def KeyToFunction(key):
         return escKeys[key]
     else:
         if key.startswith('\x1b'):
-            return 'ERR'
-        elif len(key) == 1:
+            return 'ESC+(' + key[1:] + ' : ' + str(ord(key[1])) + ')'
+        elif len(key):
             return key
         else:
             return ''
 
 def GetKey():
 
-    # from: https://stackoverflow.com/questions/71801157/detect-key-press-in-python-without-running-as-root-and-without-blockingioerror
+    # idea from: https://stackoverflow.com/questions/71801157/detect-key-press-in-python-without-running-as-root-and-without-blockingioerror
     fd = sys.stdin
 
     oldterm = termios.tcgetattr(fd)
@@ -296,6 +299,111 @@ def GetKey():
                 return ''
     finally:
         termios.tcsetattr(fd, termios.TCSANOW, oldterm)
+
+def edlin(strIN):
+    # edlin is a simple text editor for a single line
+    
+    strSave = strIN
+
+    CursorSave()        # save cursor position  
+
+    pos = len(strIN)    # pos of cursor
+
+    selStart = pos      # start of selection
+    selEnd = pos        # end of selection
+
+    removeSelection = 0 # flag to remove selection
+
+    TxtInverse(1)
+    print(strIN, end="", flush=True)
+    TxtInverse(0)
+    
+    while True:
+        removeSelection = 0
+        key = GetKey()
+        if key == "Left":
+            if pos > 0:
+                pos -= 1
+            selStart = pos
+            selEnd = pos
+        elif key == "Right":
+            if pos < len(strIN):
+                pos += 1
+            selStart = pos
+            selEnd = pos
+        elif key == "Home":
+            pos = 0
+            selStart = 0
+            selEnd = 0
+        elif key == "End":
+            pos = len(strIN)
+            selStart = pos
+            selEnd = pos
+        elif key == "Shift-Left":
+            if pos > 0:
+                if pos == selStart:
+                    selStart -= 1
+                elif pos == selEnd:
+                    selEnd -= 1
+                pos -= 1
+        elif key == "Shift-Right":
+            if pos == selEnd:
+                selEnd += 1
+            elif pos == selStart:
+                selStart += 1
+            pos += 1
+        elif key == "Shift-Home":
+            selEnd = pos
+            selStart = 0
+            pos = 0
+        elif key == "Shift-End":
+            selStart = pos
+            selEnd = len(strIN)
+            pos = len(strIN)
+
+        elif key == "Back":
+            if selStart == selEnd:
+                if pos > 0:
+                    pos -= 1
+                    selStart = pos
+            removeSelection = 1 
+        elif key == "Del":
+            if selStart == selEnd:
+                if pos < len(strIN):
+                    selEnd += 1
+            removeSelection = 1
+        elif key == "Enter":
+            return strIN
+        elif key == "Esc":
+            return strSave
+        elif len(key) == 1:
+            if selStart != selEnd:
+                removeSelection = 1
+        else:
+            time.sleep(0.05)
+        if key:
+            oldLen = len(strIN) 
+            if removeSelection:
+                strIN = strIN[:selStart] + strIN[selEnd:]
+                pos = selStart
+                selEnd = pos
+            if len(key) == 1:
+                strIN = strIN[:selStart] + key + strIN[selEnd:]
+                pos += 1
+                selStart = pos
+                selEnd = pos
+            oldLen -= len(strIN)
+            CursorRestore()
+            print(strIN[:selStart], end="", flush=True)
+            TxtInverse(1)
+            print(strIN[selStart:selEnd], end="", flush=True)
+            TxtInverse(0)
+            print(strIN[selEnd:], end="", flush=True)
+            if oldLen > 0:
+                print(" " * oldLen, end="", flush=True)
+            CursorRestore()
+            CursorMoveX(pos)
+
 
 
 def BreakLines(text, pos):
@@ -374,6 +482,12 @@ def TxtBold(set):
         print("\x1B[1m", end="", flush=True)
     else:
         print("\x1B[22m", end="", flush=True)
+
+def TxtInverse(set):
+    if set:
+        print("\x1B[7m", end="", flush=True)
+    else:
+        print("\x1B[27m", end="", flush=True)
 
 def ResetForeGround():
     print("\x1B[39m", end="", flush=True)

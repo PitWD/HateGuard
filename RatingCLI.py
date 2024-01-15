@@ -107,7 +107,8 @@ def PrintUserPost(commentFile, userName, userRating, userOccupation, userCompany
 def GetRemark():
     print("\n\n")
     ESC.ResetForeGround()
-    return input("    Input Remark > ")
+    print("    Input Remark > ")
+    return ESC.edlin("")
 
 def AddToPOI(user, comment, rating, remark):
     with open('poi.csv', 'a', newline='') as f:

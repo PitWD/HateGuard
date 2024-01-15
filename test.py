@@ -15,6 +15,6 @@ while True:
     else:
         time.sleep(0.05)    
 
-ESC.edlin("Schaun mer mal...")
+print (ESC.edlin(""))
 
 os.system('stty echo')

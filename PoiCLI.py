@@ -184,7 +184,7 @@ for poi in pois:
                 elif pressedKey == "r":
                     # Edit Remark
                     ESC.CursorRestore()
-                    commentRemark = ESC.edlin(commentRemark, 2, 2, 76)
+                    commentRemark = ESC.edlin(commentRemark)
                     poi[3] = commentRemark
                     savePOI = 1
                     pressedKey = ""

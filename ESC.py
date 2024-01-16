@@ -309,7 +309,7 @@ def edlin(strIN):
 
     pos = len(strIN)    # pos of cursor
 
-    selStart = pos      # start of selection
+    selStart = 0        # start of selection
     selEnd = pos        # end of selection
 
     removeSelection = 0 # flag to remove selection

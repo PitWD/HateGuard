@@ -3,6 +3,30 @@ import time
 import sys
 import os
 
+def PrintRating(rating):
+    if rating == 1:
+        ESC.SetForeGround(ESC.Solarized16.Green)
+        print("OK", end="")
+    elif rating == 2:
+        ESC.SetForeGround(ESC.Solarized16.Orange)
+        print("WARNING", end="")
+    elif rating == 3:
+        ESC.SetForeGround(ESC.Solarized16.Red)
+        print("CRITICAL", end="")
+    else:
+        ESC.SetForeGround(ESC.Solarized16.Blue)
+        print("UNKNOWN", end="")
+
+def GetRatingColor(rating):
+    if rating == 1:
+        return ESC.Solarized16.Green
+    elif rating == 2:
+        return ESC.Solarized16.Orange
+    elif rating == 3:
+        return ESC.Solarized16.Red
+    else:
+        return ESC.Solarized16.Blue
+
 def PrintMenuPos(key, text, keyColor=None, txtColor=None, offset=None):
     
     if keyColor is None:
@@ -20,6 +44,24 @@ def PrintMenuPos(key, text, keyColor=None, txtColor=None, offset=None):
     print(")", end="")
     ESC.SetForeGround(ESC.Solarized16.Base2)
     print(" = ", end="")
+    ESC.SetForeGround(txtColor)
+    print(text, flush=True)
+    ESC.ResetForeGround()
+
+def PrintInfoPos(key, text, keyColor=None, txtColor=None, offset=None):
+    
+    if keyColor is None:
+        keyColor = ESC.Solarized16.Base00
+    if txtColor is None:
+        txtColor = ESC.Solarized16.Base1
+    if offset is None:
+        offset = 4
+    
+    ESC.CursorRight(offset)
+    ESC.SetForeGround(keyColor)  
+    print(str(key), end="")
+    ESC.SetForeGround(ESC.Solarized16.Base2)
+    print(": ", end="")
     ESC.SetForeGround(txtColor)
     print(text, flush=True)
     ESC.ResetForeGround()

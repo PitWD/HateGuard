@@ -10,20 +10,6 @@ ESC.CLS()
 
 folder = ""
 
-def PrintRating(rating):
-    if rating == 1:
-        ESC.SetForeGround(ESC.Solarized16.Green)
-        print("OK", end="")
-    elif rating == 2:
-        ESC.SetForeGround(ESC.Solarized16.Orange)
-        print("WARNING", end="")
-    elif rating == 3:
-        ESC.SetForeGround(ESC.Solarized16.Red)
-        print("CRITICAL", end="")
-    else:
-        ESC.SetForeGround(ESC.Solarized16.Blue)
-        print("UNKNOWN", end="")
-
 def PrintMenu():
     print("")
     MEN.PrintMenuPos('  o  ', "User OK", ESC.Solarized16.Green)
@@ -85,7 +71,7 @@ def PrintUserPost(commentFile, userName, userRating, userOccupation, userCompany
     print(userName, end="")
     ESC.TxtBold(0)
     print(" (", end="")
-    PrintRating(userRating) 
+    MEN.PrintRating(userRating) 
     ESC.SetForeGround(ESC.Solarized16.Base1)
     print(")")
     ESC.SetForeGround(ESC.Solarized16.Base01)

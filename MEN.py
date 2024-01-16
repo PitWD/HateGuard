@@ -48,7 +48,7 @@ def PrintMenuPos(key, text, keyColor=None, txtColor=None, offset=None):
     print(text, flush=True)
     ESC.ResetForeGround()
 
-def PrintInfoPos(key, text, keyColor=None, txtColor=None, offset=None):
+def PrintInfoPos(key, text, keyColor=None, txtColor=None, offset=None, end=None):
     
     if keyColor is None:
         keyColor = ESC.Solarized16.Base00
@@ -56,6 +56,8 @@ def PrintInfoPos(key, text, keyColor=None, txtColor=None, offset=None):
         txtColor = ESC.Solarized16.Base1
     if offset is None:
         offset = 4
+    if end is None:
+        end = "\n"
     
     ESC.CursorRight(offset)
     ESC.SetForeGround(keyColor)  
@@ -63,7 +65,7 @@ def PrintInfoPos(key, text, keyColor=None, txtColor=None, offset=None):
     ESC.SetForeGround(ESC.Solarized16.Base2)
     print(": ", end="")
     ESC.SetForeGround(txtColor)
-    print(text, flush=True)
+    print(text, flush=True, end=end)
     ESC.ResetForeGround()
 
 

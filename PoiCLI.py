@@ -28,7 +28,7 @@ comment = ""
 def PrintUser():
     # Print Header
     ESC.CLS()
-    ESC.ResetForeBack()
+    ESC.ResetForeGround()
     ESC.CursorRight(2)
     MEN.PrintRainbow("H a t e G u a r d - Post/Person Of Interest")
     print(" on ("+ folder + ") while comment: ", end="")
@@ -37,12 +37,30 @@ def PrintUser():
     print("")
     ESC.ResetForeGround()
     # Print User
-    MEN.PrintInfoPos('firstName', firstName)
+    MEN.PrintInfoPos(' firstName', firstName)
     ESC.CursorUp(1)
-    MEN.PrintInfoPos('nickName', nickName, None, None, 40)
-    MEN.PrintInfoPos(' lastName', lastName)
+    MEN.PrintInfoPos('nickName', nickName, None, ESC.Solarized16.Base0, 40)
+    MEN.PrintInfoPos('  lastName', lastName)
     ESC.CursorUp(1)
-    MEN.PrintInfoPos('  userID', userID, None, None, 40)
+    MEN.PrintInfoPos('  userID', userID, None, ESC.Solarized16.Base0, 40)
+    MEN.PrintInfoPos('     eMail', email)
+    ESC.CursorUp(1)
+    MEN.PrintInfoPos('  rating', '', None, None, 40, "")
+    MEN.PrintRating(int(rating))
+    print("")
+    MEN.PrintInfoPos(' location', location)
+    ESC.CursorUp(1)
+    MEN.PrintInfoPos('company', company, None, None, 40)
+    MEN.PrintInfoPos('   website', website)
+    MEN.PrintInfoPos('occupation', '',None, None, None, "")
+    occuTxt = ESC.BreakLines(occupation, 60)
+    ESC.SetForeGround(ESC.Solarized16.Base1)
+    ESC.PrintLines(occuTxt, 13)
+    ESC.ResetForeGround()
+    print("")
+
+    
+
 
 
 
@@ -75,11 +93,11 @@ for poi in pois:
         continue
     userID = poi[0]
     commentID = poi[1]
-    commentType = poi[2]
+    commentReason = poi[2]
     commentRemark = poi[3]
 
     # get user from user.csv
-    with open('user.csv', 'r') as f:
+    with open('users.csv', 'r') as f:
         reader = csv.reader(f)
         users = list(reader)
     for user in users:
@@ -95,7 +113,21 @@ for poi in pois:
             occupation = user[9]
 
     # get comment from comment/
-    with open('comment/' + commentID + '.txt', 'r') as f:
+    with open('comments/' + commentID + '.txt', 'r') as f:
         comment = f.read()
+
+    PrintUser()
+    # Print Comment
+    comment = ESC.BreakLines(comment, 76) 
+    ESC.SetForeGround(ESC.Solarized16.Base2) 
+    ESC.PrintLines(comment, 2) 
+    ESC.ResetForeGround()
+    print("")
+    # Print Remark
+    MEN.PrintInfoPos('    Remark', commentRemark,MEN.GetRatingColor(commentType),None,None,"")
+    ESC.TxtBold(True)
+    print(commentRemark)
+    ESC.TxtBold(False)
+    print("")
 
                     

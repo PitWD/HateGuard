@@ -6,9 +6,7 @@ import json
 import time
 import MEN
 
-#ESC.CLS()
-os.system('stty -echo')
-os.system('stty echo')                    
+ESC.CLS()
 
 folder = ""
 userID = ""
@@ -28,7 +26,7 @@ comment = ""
 
 def PrintUser():
     # Print Header
-    #ESC.CLS()
+    ESC.CLS()
     ESC.ResetForeGround()
     ESC.CursorRight(2)
     MEN.PrintRainbow("H a t e G u a r d - Post/Person Of Interest")
@@ -57,7 +55,45 @@ def PrintUser():
     ESC.ResetForeGround()
     print("")
 
-    
+def PrintMenu():
+    print("")
+    MEN.PrintMenuPos('  o  ', "User OK", ESC.Solarized16.Green)
+    ESC.CursorUp(1) 
+    MEN.PrintMenuPos('w', "User WARNING", ESC.Solarized16.Yellow , None, 32)
+    ESC.CursorUp(1)
+    MEN.PrintMenuPos('c', "User CRITICAL", ESC.Solarized16.Red, None, 55)
+    MEN.PrintMenuPos(' del ', "Remove from POI")
+    ESC.CursorUp(1) 
+    MEN.PrintMenuPos('u', "Edit User", None, None, 32)
+    ESC.CursorUp(1)
+    MEN.PrintMenuPos('r', "Edit Remark", None, None, 55)
+    MEN.PrintMenuPos('space', "Next POI")
+    ESC.CursorUp(1)
+    MEN.PrintMenuPos('q', "QUIT processing", None, None, 32)
+
+    print("\n    ", end="")
+    print("Press Key to select an option... > ", end="")
+    ESC.SetForeGround(ESC.Solarized16.Orange)
+    print(" ", end="", flush=True)  
+    ESC.CursorLeft(1)
+
+def PrintComment():
+    MEN.PrintInfoPos('commentID', commentID,None,None,2)
+    commentTxt = ESC.BreakLines(comment, 76) 
+    ESC.SetForeGround(ESC.Solarized16.Base2) 
+    ESC.PrintLines(commentTxt, 2) 
+    ESC.ResetForeGround()
+    print("")
+
+def PrintRemark():
+    MEN.PrintInfoPos('    Remark', '',MEN.GetRatingColor(commentReason),None,None,"")
+    ESC.TxtBold(True)
+    ESC.CursorSave()
+    print(commentRemark)
+    ESC.TxtBold(False)
+    print("")
+
+
 # Get command line arguments
 argCount = len(sys.argv)
 for i in range(1, argCount):
@@ -104,24 +140,91 @@ for poi in pois:
                 website = user[7]
                 company = user[8]
                 occupation = user[9]
+                break
 
         # get comment from comment/
         with open('comments/' + commentID + '.txt', 'r') as f:
             comment = f.read()
 
-        PrintUser()
-        # Print Comment
-        MEN.PrintInfoPos('commentID', commentID,None,None,2)
-        comment = ESC.BreakLines(comment, 76) 
-        ESC.SetForeGround(ESC.Solarized16.Base2) 
-        ESC.PrintLines(comment, 2) 
-        ESC.ResetForeGround()
-        print("")
-        # Print Remark
-        MEN.PrintInfoPos('    Remark', '',MEN.GetRatingColor(commentType),None,None,"")
-        ESC.TxtBold(True)
-        print(commentRemark)
-        ESC.TxtBold(False)
-        print("")
+        pressedKey = ""
+        while pressedKey == "":
+
+            os.system('stty -echo')
+
+            PrintUser()
+            # Print Comment
+            PrintComment()
+            # Print Remark
+            PrintRemark()
+            # Print Menu
+            PrintMenu()
+
+            while pressedKey != "q":
+                pressedKey = ESC.GetKey()
+                saveUser = 0
+                savePOI = 0
+
+                if pressedKey == "o":
+                    rating = 1
+                    saveUser = 1
+                elif pressedKey == "w":
+                    rating = 2
+                    saveUser = 1
+                elif pressedKey == "c":
+                    rating = 3
+                    saveUser = 1
+                elif pressedKey == "Del":
+                    # Remove line from list
+                    pois.remove(poi)
+                    savePOI = 1
+                    pressedKey = " "
+                elif pressedKey == "u":
+                    # Edit User
+                    pass
+                elif pressedKey == "r":
+                    # Edit Remark
+                    ESC.CursorRestore()
+                    commentRemark = ESC.edlin(commentRemark, 2, 2, 76)
+                    poi[3] = commentRemark
+                    savePOI = 1
+                    pressedKey = ""
+                elif pressedKey == " ":
+                    # Next POI
+                    pass
+
+                if saveUser == 1:
+                    # Save user to users.csv
+                    user[4] = rating
+                    with open('users.csv', 'w') as f:
+                        writer = csv.writer(f)
+                        writer.writerows(users)
+                    pressedKey = ""     # redraw
+                    break
+                if savePOI == 1:
+                    # Save POI to poi.csv
+                    with open('poi.csv', 'w') as f:
+                        writer = csv.writer(f)
+                        writer.writerows(pois)
+                    if pressedKey == "":
+                        break   # redraw (from edit remark)
+
+
+                if pressedKey == " ":
+                    # Quit menu
+                    break
+
+                time.sleep(0.1)
+
+        os.system('stty echo')
+        if pressedKey == "q":
+            # Quit processing
+            os.chdir('..')
+            break
+
+
+
+
+            
+
 
 os.system('stty echo')                    

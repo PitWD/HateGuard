@@ -93,7 +93,7 @@ def PrintUserPost(commentFile, userName, userRating, userOccupation, userCompany
 def GetRemark():
     print("\n\n")
     ESC.ResetForeGround()
-    print("    Input Remark > ")
+    print("    Input Remark > ", end="")
     return ESC.edlin("")
 
 def AddToPOI(user, comment, rating, remark):
@@ -122,7 +122,6 @@ for i in range(1, argCount):
             sys.exit(1)
 
 # Open comments.csv and iterate backwards (newest 1st) through all comments
-os.system('stty -echo')
 with open('comments.csv', 'r') as f:
     reader = csv.reader(f)
     comments = list(reader)
@@ -193,7 +192,9 @@ with open('comments.csv', 'r') as f:
 
             pressedKey = ""
             while pressedKey == "": # For 2nd view vie menu 'F'
-                
+
+                os.system('stty -echo')
+
                 #Print Header and Post History
                 PrintPrePosts(postFile, parentFile, textLen)
                 # Print User Infos
@@ -283,11 +284,11 @@ with open('comments.csv', 'r') as f:
                         break
 
                     time.sleep(0.1)
+            os.system('stty echo')
             if pressedKey == "q":
                 # Quit processing
                 os.chdir('..')
                 break
-os.system('stty echo')
 
 
 

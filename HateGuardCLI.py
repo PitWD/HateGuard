@@ -118,6 +118,8 @@ while pressedKey != "q":
     if pressedKey == " ":
         # We did something, so we need to refresh the screen
         PrintMainMenu()
+        # We may need to reset the echo
+        os.system('stty -echo')
 
 ESC.ResetForeGround()
 print("\n\n")

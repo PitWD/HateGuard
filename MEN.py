@@ -4,13 +4,13 @@ import sys
 import os
 
 def PrintRating(rating):
-    if rating == 1:
+    if rating == 1 or rating == '1':
         ESC.SetForeGround(ESC.Solarized16.Green)
         print("OK", end="")
-    elif rating == 2:
+    elif rating == 2 or rating == '2':
         ESC.SetForeGround(ESC.Solarized16.Orange)
         print("WARNING", end="")
-    elif rating == 3:
+    elif rating == 3 or rating == '3':
         ESC.SetForeGround(ESC.Solarized16.Red)
         print("CRITICAL", end="")
     else:
@@ -18,11 +18,12 @@ def PrintRating(rating):
         print("UNKNOWN", end="")
 
 def GetRatingColor(rating):
-    if rating == 1:
+
+    if rating == 1 or rating == '1':
         return ESC.Solarized16.Green
-    elif rating == 2:
+    elif rating == 2 or rating == '2':
         return ESC.Solarized16.Orange
-    elif rating == 3:
+    elif rating == 3 or rating == '3':
         return ESC.Solarized16.Red
     else:
         return ESC.Solarized16.Blue

@@ -404,8 +404,6 @@ def edlin(strIN):
             CursorRestore()
             CursorMoveX(pos)
 
-
-
 def BreakLines(text, pos):
     # Split a string into multiple lines, each with a maximum length of 'pos'
     lines = []

@@ -118,7 +118,10 @@ with open('poi.csv', 'r') as f:
     reader = csv.reader(f)
     pois = list(reader)
 
-for poi in pois:
+poiID = 0
+while poiID < len(pois):
+    poi = pois[poiID]
+    #for poi in pois:
     userID = poi[0]
     if userID != "idUser":
         commentID = poi[1]
@@ -178,6 +181,7 @@ for poi in pois:
                     pois.remove(poi)
                     savePOI = 1
                     pressedKey = " "
+                    poiID -= 1
                 elif pressedKey == "u":
                     # Edit User
                     pass
@@ -221,10 +225,5 @@ for poi in pois:
             os.chdir('..')
             break
 
+    poiID += 1
 
-
-
-            
-
-
-os.system('stty echo')                    

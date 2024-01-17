@@ -13,6 +13,7 @@ userID = ""
 commentID = ""
 commentType = ""
 commentRemark = ""
+commentLink = ""
 firstName = ""
 lastName = ""
 nickName = ""
@@ -22,7 +23,9 @@ location = ""
 website = ""
 company = ""
 occupation = ""
+userLink = ""
 comment = ""
+show_links = False
 
 def PrintUser():
     # Print Header
@@ -52,6 +55,8 @@ def PrintUser():
     ESC.SetForeGround(ESC.Solarized16.Base1)
     ESC.CursorUp(1)
     ESC.PrintLines(occuTxt, 16)
+    if show_links:
+        MEN.PrintInfoPos('  userLink', userLink, None, ESC.Solarized16.Base0)
     ESC.ResetForeGround()
     print("")
 
@@ -69,7 +74,9 @@ def PrintMenu():
     MEN.PrintMenuPos('r', "Edit Remark", None, None, 55)
     MEN.PrintMenuPos('space', "Next POI")
     ESC.CursorUp(1)
-    MEN.PrintMenuPos('q', "QUIT processing", None, None, 32)
+    MEN.PrintMenuPos('s', "Show Links", None, None, 32)
+    ESC.CursorUp(1)
+    MEN.PrintMenuPos('q', "QUIT processing", None, None, 55)
 
     print("\n    ", end="")
     print("Press Key to select an option... > ", end="")
@@ -81,7 +88,9 @@ def PrintComment():
     MEN.PrintInfoPos('commentID', commentID,None,None,2)
     commentTxt = ESC.BreakLines(comment, 76) 
     ESC.SetForeGround(ESC.Solarized16.Base2) 
-    ESC.PrintLines(commentTxt, 2) 
+    ESC.PrintLines(commentTxt, 2)
+    if show_links:
+        MEN.PrintInfoPos('link', commentLink, None, ESC.Solarized16.Base0)
     ESC.ResetForeGround()
     print("")
 
@@ -127,7 +136,16 @@ while poiID < len(pois):
         commentID = poi[1]
         commentReason = poi[2]
         commentRemark = poi[3]
-
+        
+        # get comment from comments.csv
+        with open('comments.csv', 'r') as f:
+            reader = csv.reader(f)
+            comments = list(reader)
+        for comment in comments:
+            if comment[0] == commentID:
+                commentLink = comment[5]
+                break
+        
         # get user from user.csv
         with open('users.csv', 'r') as f:
             reader = csv.reader(f)
@@ -143,6 +161,7 @@ while poiID < len(pois):
                 website = user[7]
                 company = user[8]
                 occupation = user[9]
+                userLink = user[10]
                 break
 
         # get comment from comment/
@@ -150,6 +169,7 @@ while poiID < len(pois):
             comment = f.read()
 
         pressedKey = ""
+        show_links = False
         while pressedKey == "":
 
             os.system('stty -echo')
@@ -192,6 +212,11 @@ while poiID < len(pois):
                     poi[3] = commentRemark
                     savePOI = 1
                     pressedKey = ""
+                elif pressedKey == "s":
+                    # Show Links
+                    show_links = not show_links
+                    pressedKey = ""
+                    break
                 elif pressedKey == " ":
                     # Next POI
                     pass

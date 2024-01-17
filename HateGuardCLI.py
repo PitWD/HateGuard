@@ -102,7 +102,8 @@ while pressedKey != "q":
         pressedKey = ""
     elif pressedKey == "p":
         # Do LinkedIn POI View
-        pass
+        os.system('python3 PoiCLI.py -f LinkedIn')
+        pressedKey = " "
     elif pressedKey == "x":
         # Do Xitter POI View
         pass

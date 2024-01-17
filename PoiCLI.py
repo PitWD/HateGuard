@@ -90,7 +90,7 @@ def PrintComment():
     ESC.SetForeGround(ESC.Solarized16.Base2) 
     ESC.PrintLines(commentTxt, 2)
     if show_links:
-        MEN.PrintInfoPos('link', commentLink, None, ESC.Solarized16.Base0)
+        MEN.PrintInfoPos('link', commentLink, None, ESC.Solarized16.Base0,2)
     ESC.ResetForeGround()
     print("")
 

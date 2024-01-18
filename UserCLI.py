@@ -61,11 +61,11 @@ def PrintUser():
 
     MEN.PrintInfoPos('  ratingOK', ratingOK, None, ESC.Solarized16.Green)
     ESC.CursorUp(1)
-    MEN.PrintInfoPos('warning', ratingWarning, None, ESC.Solarized16.Orange, 23)
+    MEN.PrintInfoPos('warning', ratingWarning, None, ESC.Solarized16.Orange, 24)
     ESC.CursorUp(1)
-    MEN.PrintInfoPos('critical', ratingCritical, None, ESC.Solarized16.Red, 40)
+    MEN.PrintInfoPos('critical', ratingCritical, None, ESC.Solarized16.Red, 41)
     ESC.CursorUp(1)
-    MEN.PrintInfoPos('unrated', len(commentList) - ratingOK - ratingWarning - ratingCritical, None, ESC.Solarized16.Blue, 57)
+    MEN.PrintInfoPos('unrated', len(commentList) - ratingOK - ratingWarning - ratingCritical, None, ESC.Solarized16.Blue, 59)
 
     if show_links:
         MEN.PrintInfoPos('  userLink', userLink, None, ESC.Solarized16.Base0)
@@ -116,7 +116,7 @@ def PrintComment():
     if comment_cnt > len(commentList):
         comment_cnt = len(commentList)
     start = len(commentList) - comment_cnt
-    for pos in range(start, comment_cnt):
+    for pos in range(start, start + comment_cnt):
         comment = commentList[pos]
         commentID = comment[0]
         commentType = comment[1]
@@ -221,31 +221,37 @@ while userPos < len(users):
                     # Edit 1st Name
                     print("\n  > ", end="")
                     user[1] = ESC.edlin(firstName)
+                    firstName = user[1]
                     saveUser = 1
                 elif pressedKey == "2":
                     # Edit Last Name
                     print("\n  > ", end="")
                     user[2] = ESC.edlin(lastName)
+                    lastName = user[2]
                     saveUser = 1
                 elif pressedKey == "e":
                     # Edit eMail
                     print("\n  > ", end="")
                     user[5] = ESC.edlin(email)
+                    email = user[5]
                     saveUser = 1
                 elif pressedKey == "l":
                     # Edit Location
                     print("\n  > ", end="")
                     user[6] = ESC.edlin(location)
+                    location = user[6]
                     saveUser = 1
                 elif pressedKey == "t":
                     # Edit Web-Site
                     print("\n  > ", end="")
                     user[7] = ESC.edlin(website)
+                    website = user[7]
                     saveUser = 1
                 elif pressedKey == "y":
                     # Edit Company
                     print("\n  > ", end="")
                     user[8] = ESC.edlin(company)
+                    company = user[8]
                     saveUser = 1
                 elif pressedKey == "p":
                     # Print Last Comment
@@ -269,8 +275,8 @@ while userPos < len(users):
                     # Edit Remark
                     print("\n  > ", end="")
                     user[11] = ESC.edlin(remark)
+                    remark = user[11]
                     saveUser = 1
-                    pressedKey = ""
                 elif pressedKey == "s":
                     # Show Links
                     show_links = not show_links

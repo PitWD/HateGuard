@@ -11,12 +11,6 @@ ESC.CLS()
 folder = ""
 userID = ""
 remark = ""
-'''
-commentID = ""
-commentType = ""
-commentRemark = ""
-commentLink = ""
-'''
 firstName = ""
 lastName = ""
 nickName = ""
@@ -30,7 +24,7 @@ userLink = ""
 comment = ""
 commentList = []
 show_links = False
-commentCnt = 0
+comment_cnt = 0
 ratingOK = 0
 ratingWarning = 0
 ratingCritical = 0
@@ -40,7 +34,7 @@ def PrintUser():
     ESC.CLS()
     ESC.ResetForeGround()
     ESC.CursorRight(2)
-    MEN.PrintRainbow("H a t e G u a r d - Post/Person Of Interest")
+    MEN.PrintRainbow("H a t e G u a r d - Edit User CLI")
     print(" on ("+ folder + ")\n")
     # Print User
     MEN.PrintInfoPos(' firstName', firstName)
@@ -64,6 +58,14 @@ def PrintUser():
     ESC.CursorUp(1)
     ESC.PrintLines(occuTxt, 16)
     MEN.PrintInfoPos('    Remark', remark, MEN.GetRatingColor(rating))
+
+    MEN.PrintInfoPos('  ratingOK', ratingOK, None, ESC.Solarized16.Green)
+    ESC.CursorUp(1)
+    MEN.PrintInfoPos('warning', ratingWarning, None, ESC.Solarized16.Orange, 23)
+    ESC.CursorUp(1)
+    MEN.PrintInfoPos('critical', ratingCritical, None, ESC.Solarized16.Red, 40)
+    ESC.CursorUp(1)
+    MEN.PrintInfoPos('unrated', len(commentList) - ratingOK - ratingWarning - ratingCritical, None, ESC.Solarized16.Blue, 57)
 
     if show_links:
         MEN.PrintInfoPos('  userLink', userLink, None, ESC.Solarized16.Base0)
@@ -110,22 +112,23 @@ def PrintMenu():
     ESC.CursorLeft(1)
 
 def PrintComment():
-    MEN.PrintInfoPos('commentID', commentID,None,None,2)
-    commentTxt = ESC.BreakLines(comment, 76) 
-    ESC.SetForeGround(ESC.Solarized16.Base2) 
-    ESC.PrintLines(commentTxt, 2)
-    if show_links:
-        MEN.PrintInfoPos('link', commentLink, None, ESC.Solarized16.Base0,2)
-    ESC.ResetForeGround()
-    print("")
-
-def PrintRemark():
-    MEN.PrintInfoPos('    Remark', '',MEN.GetRatingColor(commentReason),None,None,"")
-    ESC.TxtBold(True)
-    ESC.CursorSave()
-    print(commentRemark)
-    ESC.TxtBold(False)
-    print("")
+    global comment_cnt
+    if comment_cnt > len(commentList):
+        comment_cnt = len(commentList)
+    start = len(commentList) - comment_cnt
+    for pos in range(start, comment_cnt):
+        comment = commentList[pos]
+        commentID = comment[0]
+        commentType = comment[1]
+        MEN.PrintInfoPos('commentID', commentID, None, MEN.GetRatingColor(commentType), 2)
+        # Open comment file and read content
+        with open('comments/' + commentID + '.txt', 'r') as f:
+            commentTxt = f.read()
+        commentTxt = ESC.BreakLines(commentTxt, 78)
+        ESC.SetForeGround(ESC.Solarized16.Base1)
+        ESC.PrintLines(commentTxt)
+        ESC.ResetForeGround()
+        print("")
 
 
 # Get command line arguments
@@ -159,7 +162,7 @@ while userPos < len(users):
     ratingOK = 0
     ratingWarning = 0
     ratingCritical = 0
-    commentCnt = 0
+    comment_cnt = 0
 
     if userID != "id":
         firstName = user[1]
@@ -198,8 +201,6 @@ while userPos < len(users):
             PrintUser()
             # Print Comment
             PrintComment()
-            # Print Remark
-            PrintRemark()
             # Print Menu
             PrintMenu()
 
@@ -218,49 +219,55 @@ while userPos < len(users):
                     saveUser = 1
                 elif pressedKey == "1":
                     # Edit 1st Name
-                    print("")
+                    print("\n  > ", end="")
                     user[1] = ESC.edlin(firstName)
                     saveUser = 1
                 elif pressedKey == "2":
                     # Edit Last Name
-                    print("")
+                    print("\n  > ", end="")
                     user[2] = ESC.edlin(lastName)
                     saveUser = 1
                 elif pressedKey == "e":
                     # Edit eMail
-                    print("")
+                    print("\n  > ", end="")
                     user[5] = ESC.edlin(email)
                     saveUser = 1
                 elif pressedKey == "l":
                     # Edit Location
-                    print("")
+                    print("\n  > ", end="")
                     user[6] = ESC.edlin(location)
                     saveUser = 1
                 elif pressedKey == "t":
                     # Edit Web-Site
-                    print("")
+                    print("\n  > ", end="")
                     user[7] = ESC.edlin(website)
                     saveUser = 1
                 elif pressedKey == "y":
                     # Edit Company
-                    print("")
+                    print("\n  > ", end="")
                     user[8] = ESC.edlin(company)
                     saveUser = 1
                 elif pressedKey == "p":
                     # Print Last Comment
-                    commentCnt = 1
+                    comment_cnt = 1
+                    pressedKey = ""
+                    break
                 elif pressedKey == "P":
                     # Print 10 Comments
-                    commentCnt = 10 
+                    comment_cnt = 10 
+                    pressedKey = ""
+                    break
                 elif pressedKey == "A":
                     # Print All Comments
-                    commentCnt = len(commentList)
+                    comment_cnt = len(commentList)
+                    pressedKey = ""
+                    break
                 elif pressedKey == "f":
                     # Find User
                     pass
                 elif pressedKey == "r":
                     # Edit Remark
-                    print("")
+                    print("\n  > ", end="")
                     user[11] = ESC.edlin(remark)
                     saveUser = 1
                     pressedKey = ""
@@ -272,6 +279,7 @@ while userPos < len(users):
                 elif pressedKey == "Back":
                     # Previous User
                     userPos -= 2
+                    pressedKey = " "
                 elif pressedKey == " ":
                     # Next User
                     pass

@@ -57,7 +57,7 @@ def PrintUser():
     ESC.SetForeGround(ESC.Solarized16.Base1)
     ESC.CursorUp(1)
     ESC.PrintLines(occuTxt, 16)
-    MEN.PrintInfoPos('    Remark', remark, MEN.GetRatingColor(rating))
+    MEN.PrintInfoPos('    Remark', remark, MEN.GetRatingColor(rating), ESC.Solarized16.Base2)
 
     MEN.PrintInfoPos('  ratingOK', ratingOK, None, ESC.Solarized16.Green)
     ESC.CursorUp(1)
@@ -149,6 +149,14 @@ for i in range(1, argCount):
             print("Missing argument for '" + arg + "'!")
             time.sleep(3)
             sys.exit(1)
+    elif arg == "-u" or arg == "--userID":
+        if i+1 < argCount:
+            userID = sys.argv[i+1]
+            print("userID: " + userID)
+        else:
+            print("Missing argument for '" + arg + "'!")
+            time.sleep(3)
+            sys.exit(1)
 
 # Open poi.csv and iterate through all lines
 with open('users.csv', 'r') as f:
@@ -156,6 +164,13 @@ with open('users.csv', 'r') as f:
     users = list(reader)
 
 userPos = 0
+if userID != "":
+    # Find user in users.csv
+    for user in users:
+        if user[0] == userID:
+            break
+        userPos += 1
+
 while userPos < len(users):
     user = users[userPos]
     userID = user[0]

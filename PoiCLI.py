@@ -204,7 +204,11 @@ while poiID < len(pois):
                     poiID -= 1
                 elif pressedKey == "u":
                     # Edit User
-                    pass
+                    os.chdir('..')
+                    os.system('python3 UserCLI.py -f ' + folder + ' -u ' + userID)
+                    os.chdir(folder)
+                    pressedKey = ""
+                    break
                 elif pressedKey == "r":
                     # Edit Remark
                     ESC.CursorRestore()

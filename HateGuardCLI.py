@@ -6,8 +6,8 @@ import os
 
 sys.path.append('..')
 
-HateGuardVersion = "0.1.1a"
-HateGuardDate = "12.01.2023"
+HateGuardVersion = "0.1.2a"
+HateGuardDate = "18.01.2023"
 
 def PrintMainMenu():
     ESC.CLS()

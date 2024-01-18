@@ -30,7 +30,7 @@ if not os.path.exists('settings.json'):
 if not os.path.exists('users.csv'):
     with open('users.csv', 'w', newline='') as f:
         writer = csv.writer(f)
-        writer.writerow(['id', 'firstName', 'lastName', 'nickName','rating', 'email', 'location', 'www', 'company', 'occupation', 'link', 'picture'])
+        writer.writerow(['id', 'firstName', 'lastName', 'nickName','rating', 'email', 'location', 'www', 'company', 'occupation', 'link', 'remark'])
 
 # Create debug folder, if missing
 if not os.path.exists('debug'):

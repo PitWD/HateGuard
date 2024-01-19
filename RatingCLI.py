@@ -82,7 +82,15 @@ def PrintUserPost(commentFile, userName, userRating, userOccupation, userCompany
     ESC.CursorRight(2)
     print(commentDate)
     ESC.TxtBold(0)
-    
+    ESC.CursorUp(1)
+    MEN.PrintInfoPos('OK', ratingOK, None, ESC.Solarized16.Green, 27)
+    ESC.CursorUp(1)
+    MEN.PrintInfoPos('Warn.', ratingWarning, None, ESC.Solarized16.Orange, 36)
+    ESC.CursorUp(1)
+    MEN.PrintInfoPos('Crit.', ratingCritical, None, ESC.Solarized16.Red, 47)
+    ESC.CursorUp(1)
+    MEN.PrintInfoPos('Total', ratingCnt, None, ESC.Solarized16.Base01, 58)
+
     # Print Comment
     ESC.SetForeGround(ESC.Solarized16.Base2)
     commentFile = ESC.BreakLines(commentFile, 60)
@@ -131,6 +139,10 @@ with open('comments.csv', 'r') as f:
         postFile = ""
         commentFile = ""
         parentFile = ""
+        ratingCnt = 0
+        ratingOK = 0
+        ratingWarning = 0
+        ratingCritical = 0
         
         try:    # if int(comment[1]) fails, we are done with comments... 
             commentRating = int(comment[1])
@@ -149,6 +161,19 @@ with open('comments.csv', 'r') as f:
                     userRating = int(user[4])
                     userCompany = user[8]
                     userOccupation = user[9]
+                    # Find all ratings of user
+                    with open('comments.csv', 'r') as f:
+                        reader = csv.reader(f)
+                        comments2 = list(reader)
+                    for comment2 in comments2:
+                        if comment2[2] == user[0]:
+                            ratingCnt += 1
+                            if comment2[1] == "1":
+                                ratingOK += 1
+                            elif comment2[1] == "2":
+                                ratingWarning += 1
+                            elif comment2[1] == "3":
+                                ratingCritical += 1
                     break
 
         # Check, if comment is unrated and user is not rated as OK

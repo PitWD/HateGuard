@@ -22,6 +22,7 @@ if not os.path.exists('settings.json'):
     data = {
         "user2scrap": "user2scrap",
         "urn2scrap": "urn2scrap",
+        "autoOK": "10",
     }
     with open('settings.json', 'w') as f:
         json.dump(data, f)

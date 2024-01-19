@@ -129,6 +129,11 @@ for i in range(1, argCount):
             time.sleep(3)
             sys.exit(1)
 
+# Get autoOK (Minimum Count of OK-Comments for autoOK)
+with open('settings.json', 'r') as f:
+    data = json.load(f)
+    autoOK = int(data['autoOK'])
+
 # Open comments.csv and iterate backwards (newest 1st) through all comments
 with open('comments.csv', 'r') as f:
     reader = csv.reader(f)
@@ -151,169 +156,172 @@ with open('comments.csv', 'r') as f:
 
         commentDate = comment[4]
 
-        # Find user of comment
-        with open('users.csv', 'r') as f:
-            reader = csv.reader(f)
-            users = list(reader)
-            for user in users:
-                if user[0] == comment[2]:
-                    userName = user[1] + " " + user[2]
-                    userRating = int(user[4])
-                    userCompany = user[8]
-                    userOccupation = user[9]
-                    # Find all ratings of user
+        # Check, if comment is unrated
+        if not commentRating:
+            # Find user of comment
+            with open('users.csv', 'r') as f:
+                reader = csv.reader(f)
+                users = list(reader)
+                for user in users:
+                    if user[0] == comment[2]:
+                        userName = user[1] + " " + user[2]
+                        userRating = int(user[4])
+                        userCompany = user[8]
+                        userOccupation = user[9]
+                        # Find all ratings of user
+                        with open('comments.csv', 'r') as f:
+                            reader = csv.reader(f)
+                            comments2 = list(reader)
+                        for comment2 in comments2:
+                            if comment2[2] == user[0]:
+                                ratingCnt += 1
+                                if comment2[1] == "1":
+                                    ratingOK += 1
+                                elif comment2[1] == "2":
+                                    ratingWarning += 1
+                                elif comment2[1] == "3":
+                                    ratingCritical += 1
+                        break
+
+            # Check, if user is not rated as OK
+    #        print("ratingOK: " + str(ratingOK) + " autoOK: " + str(autoOK) + " ratingWarning: " + str(ratingWarning) + " ratingCritical: " + str(ratingCritical))
+            if userRating != 1 and ratingOK < autoOK or ratingWarning != 0 or ratingCritical != 0:
+                # Open comment file
+                with open('comments/' + comment[0] + '.txt', 'r') as f:
+                    commentFile = f.read()
+                            
+                # Check if parent is a post
+                with open('posts.csv', 'r') as f:
+                    reader = csv.reader(f)
+                    posts = list(reader)
+                    posts.reverse()
+                    for post in posts:
+                        if post[0] == comment[3]:
+                            # Open post file
+                            with open('posts/' + post[0] + '.txt', 'r') as f:
+                                postFile = f.read()
+                            break
+                
+                # Check if parent is a comment
+                if postFile == "":
                     with open('comments.csv', 'r') as f:
                         reader = csv.reader(f)
                         comments2 = list(reader)
-                    for comment2 in comments2:
-                        if comment2[2] == user[0]:
-                            ratingCnt += 1
-                            if comment2[1] == "1":
-                                ratingOK += 1
-                            elif comment2[1] == "2":
-                                ratingWarning += 1
-                            elif comment2[1] == "3":
-                                ratingCritical += 1
-                    break
-
-        # Check, if comment is unrated and user is not rated as OK
-        if not commentRating and userRating != 1:
-            # Open comment file
-            with open('comments/' + comment[0] + '.txt', 'r') as f:
-                commentFile = f.read()
-                        
-            # Check if parent is a post
-            with open('posts.csv', 'r') as f:
-                reader = csv.reader(f)
-                posts = list(reader)
-                posts.reverse()
-                for post in posts:
-                    if post[0] == comment[3]:
-                        # Open post file
-                        with open('posts/' + post[0] + '.txt', 'r') as f:
+                        for comment2 in reversed(comments2):
+                            if comment2[0] == comment[3]:
+                                # Open parent file
+                                with open('comments/' + comment2[0] + '.txt', 'r') as f:
+                                    parentFile = f.read()
+                                break
+                    try:
+                        # Open parent - post
+                        with open('posts/' + comment2[3] + '.txt', 'r') as f:
                             postFile = f.read()
-                        break
-            
-            # Check if parent is a comment
-            if postFile == "":
-                with open('comments.csv', 'r') as f:
-                    reader = csv.reader(f)
-                    comments2 = list(reader)
-                    for comment2 in reversed(comments2):
-                        if comment2[0] == comment[3]:
-                            # Open parent file
-                            with open('comments/' + comment2[0] + '.txt', 'r') as f:
-                                parentFile = f.read()
-                            break
-                try:
-                    # Open parent - post
-                    with open('posts/' + comment2[3] + '.txt', 'r') as f:
-                        postFile = f.read()
-                except:
-                    # Parent is a comment, too
-                    with open('comments/' + comment2[3] + '.txt', 'r') as f:
-                        postFile = f.read()
+                    except:
+                        # Parent is a comment, too
+                        with open('comments/' + comment2[3] + '.txt', 'r') as f:
+                            postFile = f.read()
 
 
-            pressedKey = ""
-            while pressedKey == "": # For 2nd view vie menu 'F'
+                pressedKey = ""
+                while pressedKey == "": # For 2nd view vie menu 'F'
 
-                os.system('stty -echo')
+                    os.system('stty -echo')
 
-                #Print Header and Post History
-                PrintPrePosts(postFile, parentFile, textLen)
-                # Print User Infos
-                PrintUserPost(commentFile, userName, userRating, userOccupation, userCompany, commentDate)
-                # Print Menu
-                PrintMenu()
+                    #Print Header and Post History
+                    PrintPrePosts(postFile, parentFile, textLen)
+                    # Print User Infos
+                    PrintUserPost(commentFile, userName, userRating, userOccupation, userCompany, commentDate)
+                    # Print Menu
+                    PrintMenu()
 
-                # Get Key
-                saveUser = 0
-                saveComment = 0
-                textLen = 7 
-
-                while pressedKey != "q":
-                    pressedKey = ESC.GetKey()
+                    # Get Key
                     saveUser = 0
                     saveComment = 0
-                    remark = ""
+                    textLen = 7 
 
-                    # OK
-                    if pressedKey == "I":
-                        remark = GetRemark()
-                        pressedKey = "i"
-                    if pressedKey == "i":
-                        AddToPOI(user[0], comment[0], 1, remark)
-                        pressedKey = " "
-                    
-                    # WARNING
-                    if pressedKey == "/":
-                        remark = GetRemark()
-                        pressedKey = "_"
-                    if pressedKey == "_":
-                        AddToPOI(user[0], comment[0], 2, remark)
-                        pressedKey = "-"
+                    while pressedKey != "q":
+                        pressedKey = ESC.GetKey()
+                        saveUser = 0
+                        saveComment = 0
+                        remark = ""
 
-                    # CRITICAL
-                    if pressedKey == "*":
-                        remark = GetRemark()
-                        pressedKey = "#"
-                    if pressedKey == "#":
-                        AddToPOI(user[0], comment[0], 3, remark)
-                        pressedKey = "+"
+                        # OK
+                        if pressedKey == "I":
+                            remark = GetRemark()
+                            pressedKey = "i"
+                        if pressedKey == "i":
+                            AddToPOI(user[0], comment[0], 1, remark)
+                            pressedKey = " "
+                        
+                        # WARNING
+                        if pressedKey == "/":
+                            remark = GetRemark()
+                            pressedKey = "_"
+                        if pressedKey == "_":
+                            AddToPOI(user[0], comment[0], 2, remark)
+                            pressedKey = "-"
 
-                    if pressedKey == "o":
-                        # User OK
-                        user[4] = 1
-                        saveUser = 1
-                    elif pressedKey == "w":
-                        # User WARNING
-                        user[4] = 2
-                        saveUser = 1    
-                    elif pressedKey == "c":
-                        # User CRITICAL
-                        user[4] = 3
-                        saveUser = 1
-                    elif pressedKey == " ":
-                        # Comment OK
-                        comment[1] = 1
-                        saveComment = 1
-                    elif pressedKey == "-":
-                        # Comment WARNING
-                        comment[1] = 2
-                        saveComment = 1
-                    elif pressedKey == "+":
-                        # Comment CRITICAL
-                        comment[1] = 3
-                        saveComment = 1
-                    elif pressedKey == "F":
-                        # Full Text Length
-                        textLen = 0
-                        pressedKey = ""
-                        break
-                    if saveUser == 1:
-                        # Update users.csv
-                        with open('users.csv', 'w', newline='') as f:
-                            writer = csv.writer(f)
-                            writer.writerows(users)
-                    elif saveComment == 1:
-                        # Update comments.csv
-                        with open('comments.csv', 'w', newline='') as f:
-                            #commentsTmp = comments.reverse()
-                            writer = csv.writer(f)
-                            writer.writerows(comments)
-                        pressedKey = " "
-                            
-                    if pressedKey == " ":
-                        # Leave Menu - next comment
-                        break
+                        # CRITICAL
+                        if pressedKey == "*":
+                            remark = GetRemark()
+                            pressedKey = "#"
+                        if pressedKey == "#":
+                            AddToPOI(user[0], comment[0], 3, remark)
+                            pressedKey = "+"
 
-                    time.sleep(0.1)
-            os.system('stty echo')
-            if pressedKey == "q":
-                # Quit processing
-                os.chdir('..')
-                break
+                        if pressedKey == "o":
+                            # User OK
+                            user[4] = 1
+                            saveUser = 1
+                        elif pressedKey == "w":
+                            # User WARNING
+                            user[4] = 2
+                            saveUser = 1    
+                        elif pressedKey == "c":
+                            # User CRITICAL
+                            user[4] = 3
+                            saveUser = 1
+                        elif pressedKey == " ":
+                            # Comment OK
+                            comment[1] = 1
+                            saveComment = 1
+                        elif pressedKey == "-":
+                            # Comment WARNING
+                            comment[1] = 2
+                            saveComment = 1
+                        elif pressedKey == "+":
+                            # Comment CRITICAL
+                            comment[1] = 3
+                            saveComment = 1
+                        elif pressedKey == "F":
+                            # Full Text Length
+                            textLen = 0
+                            pressedKey = ""
+                            break
+                        if saveUser == 1:
+                            # Update users.csv
+                            with open('users.csv', 'w', newline='') as f:
+                                writer = csv.writer(f)
+                                writer.writerows(users)
+                        elif saveComment == 1:
+                            # Update comments.csv
+                            with open('comments.csv', 'w', newline='') as f:
+                                #commentsTmp = comments.reverse()
+                                writer = csv.writer(f)
+                                writer.writerows(comments)
+                            pressedKey = " "
+                                
+                        if pressedKey == " ":
+                            # Leave Menu - next comment
+                            break
+
+                        time.sleep(0.1)
+                os.system('stty echo')
+                if pressedKey == "q":
+                    # Quit processing
+                    os.chdir('..')
+                    break
 
 
 

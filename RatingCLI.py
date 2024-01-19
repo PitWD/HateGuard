@@ -168,19 +168,20 @@ with open('comments.csv', 'r') as f:
                         userRating = int(user[4])
                         userCompany = user[8]
                         userOccupation = user[9]
-                        # Find all ratings of user
-                        with open('comments.csv', 'r') as f:
-                            reader = csv.reader(f)
-                            comments2 = list(reader)
-                        for comment2 in comments2:
-                            if comment2[2] == user[0]:
-                                ratingCnt += 1
-                                if comment2[1] == "1":
-                                    ratingOK += 1
-                                elif comment2[1] == "2":
-                                    ratingWarning += 1
-                                elif comment2[1] == "3":
-                                    ratingCritical += 1
+                        if userRating != 1:
+                            # Find all ratings of user
+                            with open('comments.csv', 'r') as f:
+                                reader = csv.reader(f)
+                                comments2 = list(reader)
+                            for comment2 in comments2:
+                                if comment2[2] == user[0]:
+                                    ratingCnt += 1
+                                    if comment2[1] == "1":
+                                        ratingOK += 1
+                                    elif comment2[1] == "2":
+                                        ratingWarning += 1
+                                    elif comment2[1] == "3":
+                                        ratingCritical += 1
                         break
 
             # Check, if user is not rated as OK

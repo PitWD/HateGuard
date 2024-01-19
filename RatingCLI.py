@@ -33,9 +33,11 @@ def PrintMenu():
     ESC.CursorUp(1)
     MEN.PrintMenuPos('*', "CRIT & POI & Rem.", ESC.Solarized16.Red, None, 55)
 
-    MEN.PrintMenuPos('  F  ', "Full Text Len", ESC.Solarized16.Blue)
+    MEN.PrintMenuPos('  u  ', "Edit User")
     ESC.CursorUp(1)
-    MEN.PrintMenuPos('q', "QUIT processing", None, None, 32)
+    MEN.PrintMenuPos('F', "Full Text Len", ESC.Solarized16.Blue, None, 32)
+    ESC.CursorUp(1)
+    MEN.PrintMenuPos('q', "QUIT processing", None, None, 55)
 
     print("\n    ", end="")
     print("Press Key to select an option... > ", end="")
@@ -298,6 +300,13 @@ with open('comments.csv', 'r') as f:
                         elif pressedKey == "F":
                             # Full Text Length
                             textLen = 0
+                            pressedKey = ""
+                            break
+                        elif pressedKey == "u":
+                            # Edit User
+                            os.chdir('..')
+                            os.system('python3 UserCLI.py -f ' + folder + ' -u ' + user[0])
+                            os.chdir(folder)
                             pressedKey = ""
                             break
                         if saveUser == 1:

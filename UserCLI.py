@@ -285,7 +285,20 @@ while userPos < len(users):
                     break
                 elif pressedKey == "f":
                     # Find User
-                    pass
+                    print("\n  > ", end="")
+                    searchFor = ESC.edlin("")
+                    if searchFor != "":
+                        userPos = -2
+                        found = 0                        
+                        for user2 in users:
+                            userPos += 1
+                            for i in range(0, 4):
+                                if user2[i].lower().startswith(searchFor.lower()) or user2[i].lower().endswith(searchFor.lower()) or searchFor.lower() in user2[i].lower() or searchFor.lower() == user2[i].lower():
+                                    found = 1
+                                    break
+                            if found == 1:
+                                break
+                    pressedKey = " "
                 elif pressedKey == "r":
                     # Edit Remark
                     print("\n  > ", end="")
@@ -324,6 +337,7 @@ while userPos < len(users):
         if pressedKey == "q":
             # Quit processing
             os.chdir('..')
+            ESC.ResetForeGround()
             break
 
     userPos += 1

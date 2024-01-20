@@ -18,6 +18,10 @@ firstName = ""
 lastName = ""
 nickName = ""
 rating = ""
+ratingCnt = 0
+ratingOK = 0
+ratingWarning = 0
+ratingCritical = 0
 email = ""
 location = ""
 website = ""
@@ -26,6 +30,7 @@ occupation = ""
 userLink = ""
 comment = ""
 show_links = False
+remark = ""
 
 def PrintUser():
     # Print Header
@@ -55,6 +60,17 @@ def PrintUser():
     ESC.SetForeGround(ESC.Solarized16.Base1)
     ESC.CursorUp(1)
     ESC.PrintLines(occuTxt, 16)
+    MEN.PrintInfoPos('    Remark', remark, MEN.GetRatingColor(rating), ESC.Solarized16.Base2)
+
+    MEN.PrintInfoPos('  ratingOK', ratingOK, None, ESC.Solarized16.Green)
+    ESC.CursorUp(1)
+    MEN.PrintInfoPos('warning', ratingWarning, None, ESC.Solarized16.Orange, 24)
+    ESC.CursorUp(1)
+    MEN.PrintInfoPos('critical', ratingCritical, None, ESC.Solarized16.Red, 41)
+    ESC.CursorUp(1)
+    MEN.PrintInfoPos('unrated', ratingCnt, None, ESC.Solarized16.Base01, 59)
+
+
     if show_links:
         MEN.PrintInfoPos('  userLink', userLink, None, ESC.Solarized16.Base0)
     ESC.ResetForeGround()
@@ -162,6 +178,24 @@ while poiID < len(pois):
                 company = user[8]
                 occupation = user[9]
                 userLink = user[10]
+                remark = user[11]
+                ratingCnt = 0
+                ratingOK = 0
+                ratingWarning = 0
+                ratingCritical = 0
+                # get rating from comments.csv
+                with open('comments.csv', 'r') as f:
+                    reader = csv.reader(f)
+                    comments2 = list(reader)
+                for comment2 in comments2:
+                    if comment2[2] == user[0]:
+                        ratingCnt += 1
+                        if comment2[1] == "1":
+                            ratingOK += 1
+                        elif comment2[1] == "2":
+                            ratingWarning += 1
+                        elif comment2[1] == "3":
+                            ratingCritical += 1
                 break
 
         # get comment from comment/

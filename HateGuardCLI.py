@@ -6,8 +6,8 @@ import os
 
 sys.path.append('..')
 
-HateGuardVersion = "0.1.2a"
-HateGuardDate = "18.01.2023"
+HateGuardVersion = "0.1.3a"
+HateGuardDate = "20.01.2023"
 
 def PrintMainMenu():
     ESC.CLS()
@@ -25,36 +25,36 @@ def PrintMainMenu():
     ESC.ResetForeGround()
     print( "\n")
 
-    MEN.PrintMenuPos('h', "Show Help Screen")
+    MEN.PrintMenuPos('h', "Show Help Screen",None, None, 6)
     ESC.CursorUp(1)
-    MEN.PrintMenuPos('q', "Quit",None, None, 40)
+    MEN.PrintMenuPos('q', "Quit",None, None, 42)
     print("")
 
-    MEN.PrintMenuPos('l', "Do LinkedIn Rating")
+    MEN.PrintMenuPos('l', "Do LinkedIn Rating",None, None, 6)
     ESC.CursorUp(1)
-    MEN.PrintMenuPos('L', "Do LinkedIn Scraping",None, None, 40)
+    MEN.PrintMenuPos('L', "Do LinkedIn Scraping",None, None, 42)
 
-    MEN.PrintMenuPos('t', "Do Xitter Rating", ESC.Solarized16.Base01, ESC.Solarized16.Base01)
+    MEN.PrintMenuPos('t', "Do Xitter Rating", ESC.Solarized16.Base01, ESC.Solarized16.Base01,6)
     ESC.CursorUp(1)
-    MEN.PrintMenuPos('T', "Do Xitter Scraping",ESC.Solarized16.Base01, ESC.Solarized16.Base01, 40)
+    MEN.PrintMenuPos('T', "Do Xitter Scraping",ESC.Solarized16.Base01, ESC.Solarized16.Base01, 42)
 
-    MEN.PrintMenuPos('f', "Do Facebook Rating", ESC.Solarized16.Base01, ESC.Solarized16.Base01)
+    MEN.PrintMenuPos('f', "Do Facebook Rating", ESC.Solarized16.Base01, ESC.Solarized16.Base01,6)
     ESC.CursorUp(1)
-    MEN.PrintMenuPos('F', "Do Facebook Scraping",ESC.Solarized16.Base01, ESC.Solarized16.Base01, 40)
+    MEN.PrintMenuPos('F', "Do Facebook Scraping",ESC.Solarized16.Base01, ESC.Solarized16.Base01, 42)
 
-    MEN.PrintMenuPos('i', "Do Instagram Rating", ESC.Solarized16.Base01, ESC.Solarized16.Base01)
+    MEN.PrintMenuPos('i', "Do Instagram Rating", ESC.Solarized16.Base01, ESC.Solarized16.Base01,6)
     ESC.CursorUp(1)
-    MEN.PrintMenuPos('I', "Do Instagram Scraping",ESC.Solarized16.Base01, ESC.Solarized16.Base01, 40)
+    MEN.PrintMenuPos('I', "Do Instagram Scraping",ESC.Solarized16.Base01, ESC.Solarized16.Base01, 42)
 
     print("")
 
-    MEN.PrintMenuPos('p', "Do LinkedIn POI View")
+    MEN.PrintMenuPos('p/P', "LinkedIn POI/User View",None, None)
     ESC.CursorUp(1)
-    MEN.PrintMenuPos('x', "Do Xitter POI View", ESC.Solarized16.Base01, ESC.Solarized16.Base01, 40)
+    MEN.PrintMenuPos('x/X', "Xitter POI/User View", ESC.Solarized16.Base01, ESC.Solarized16.Base01, 40)
     
-    MEN.PrintMenuPos('b', "Do Facebook POI View", ESC.Solarized16.Base01, ESC.Solarized16.Base01)
+    MEN.PrintMenuPos('b/B', "Facebook POI/User View", ESC.Solarized16.Base01, ESC.Solarized16.Base01)
     ESC.CursorUp(1)
-    MEN.PrintMenuPos('g', "Do Instagram POI View", ESC.Solarized16.Base01, ESC.Solarized16.Base01, 40)
+    MEN.PrintMenuPos('g/G', "Instagram POI/User View", ESC.Solarized16.Base01, ESC.Solarized16.Base01, 40)
 
     print("\n    ", end="")
     print("Press Key to select an option... > ", end="")
@@ -111,6 +111,19 @@ while pressedKey != "q":
         # Do Facebook POI View
         pass
     elif pressedKey == "g":
+        # Do Instagram POI View
+        pass
+    elif pressedKey == "P":
+        # Do LinkedIn POI View
+        os.system('python3 UserCLI.py -f LinkedIn')
+        pressedKey = " "
+    elif pressedKey == "X":
+        # Do Xitter POI View
+        pass
+    elif pressedKey == "B":
+        # Do Facebook POI View
+        pass
+    elif pressedKey == "G":
         # Do Instagram POI View
         pass
 

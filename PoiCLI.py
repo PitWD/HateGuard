@@ -93,6 +93,7 @@ def PrintMenu():
     MEN.PrintMenuPos('s', "Show Links", None, None, 32)
     ESC.CursorUp(1)
     MEN.PrintMenuPos('q', "QUIT processing", None, None, 55)
+    MEN.PrintMenuPos(' back', "Previous POI")
 
     print("\n    ", end="")
     print("Press Key to select an option... > ", end="")
@@ -236,6 +237,11 @@ while poiID < len(pois):
                     savePOI = 1
                     pressedKey = " "
                     poiID -= 1
+                elif pressedKey == "Back":
+                    # Previous POI
+                    poiID -= 2
+                    pressedKey = " "
+                    #break
                 elif pressedKey == "u":
                     # Edit User
                     os.chdir('..')
@@ -289,4 +295,8 @@ while poiID < len(pois):
             break
 
     poiID += 1
+    if poiID >= len(pois):
+        poiID = 1
+    elif poiID <= 0:
+        poiID = len(pois) - 1
 

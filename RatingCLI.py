@@ -33,11 +33,12 @@ def PrintMenu():
     ESC.CursorUp(1)
     MEN.PrintMenuPos('*', "CRIT & POI & Rem.", ESC.Solarized16.Red, None, 55)
 
-    MEN.PrintMenuPos('  u  ', "Edit User")
+    MEN.PrintMenuPos(' back', "prev. Comment")
     ESC.CursorUp(1)
-    MEN.PrintMenuPos('F', "Full Text Len", ESC.Solarized16.Blue, None, 32)
+    MEN.PrintMenuPos('u', "Edit User", None, None, 32)
     ESC.CursorUp(1)
-    MEN.PrintMenuPos('q', "QUIT processing", None, None, 55)
+    MEN.PrintMenuPos('F', "Full Text Len", ESC.Solarized16.Blue, None, 55)
+    MEN.PrintMenuPos('  q  ', "QUIT processing", None, None)
 
     print("\n    ", end="")
     print("Press Key to select an option... > ", end="")
@@ -141,8 +142,11 @@ with open('comments.csv', 'r') as f:
     reader = csv.reader(f)
     comments = list(reader)
     textLen = 7
-
-    for comment in reversed(comments):
+    pressedKey = "" 
+    commentPos = len(comments) - 1
+    #for comment in reversed(comments):
+    while commentPos < len(comments):
+        comment = comments[commentPos]
         postFile = ""
         commentFile = ""
         parentFile = ""
@@ -159,7 +163,7 @@ with open('comments.csv', 'r') as f:
         commentDate = comment[4]
 
         # Check, if comment is unrated
-        if not commentRating:
+        if not commentRating or pressedKey == "Back":
             # Find user of comment
             with open('users.csv', 'r') as f:
                 reader = csv.reader(f)
@@ -187,8 +191,7 @@ with open('comments.csv', 'r') as f:
                         break
 
             # Check, if user is not rated as OK
-    #        print("ratingOK: " + str(ratingOK) + " autoOK: " + str(autoOK) + " ratingWarning: " + str(ratingWarning) + " ratingCritical: " + str(ratingCritical))
-            if userRating != 1 and ratingOK < autoOK or ratingWarning != 0 or ratingCritical != 0:
+            if userRating != 1 and ratingOK < autoOK or ratingWarning != 0 or ratingCritical != 0 or pressedKey == "Back":
                 # Open comment file
                 with open('comments/' + comment[0] + '.txt', 'r') as f:
                     commentFile = f.read()
@@ -309,6 +312,10 @@ with open('comments.csv', 'r') as f:
                             os.chdir(folder)
                             pressedKey = ""
                             break
+                        elif pressedKey == "Back":
+                            # Back to previous comment
+                            commentPos += 2
+
                         if saveUser == 1:
                             # Update users.csv
                             with open('users.csv', 'w', newline='') as f:
@@ -322,8 +329,9 @@ with open('comments.csv', 'r') as f:
                                 writer.writerows(comments)
                             pressedKey = " "
                                 
-                        if pressedKey == " ":
+                        if pressedKey == " " or pressedKey == "Back":
                             # Leave Menu - next comment
+                            #commentPos -= 1
                             break
 
                         time.sleep(0.1)
@@ -332,6 +340,9 @@ with open('comments.csv', 'r') as f:
                     # Quit processing
                     os.chdir('..')
                     break
+        commentPos -= 1
+        if commentPos >= len(comments):
+            commentPos = len(comments) - 1
 
 
 

@@ -15,7 +15,7 @@ def PrintRating(rating):
         print("CRITICAL", end="")
     else:
         ESC.SetForeGround(ESC.Solarized16.Blue)
-        print("UNKNOWN", end="")
+        print("unrated", end="")
 
 def GetRatingColor(rating):
 

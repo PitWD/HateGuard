@@ -144,6 +144,56 @@ def fix_commentID(commentID):
     commentID = commentID.rsplit(',', 1)[0]
     return commentID
 
+def extract_user (user):
+    # Extract user-infos from encapsulated dict
+    # user is the list
+    # user = moreComment['commenterForDashConversion']['image']['attributes'] (moreComment)
+    # user = user['actor']['name']['attributes'] (Post)
+
+    # Remove leading and trailing '[' and ']' if they exist
+    user = str(user).strip('[]')
+    # Make dict from string
+    user = ast.literal_eval(user)
+
+    typeProfile = 'miniProfile'
+    company = "N/A"
+
+    try:
+        firstName = user[typeProfile]['firstName']
+    except:
+        # Influencer
+        typeProfile = 'miniInfluencer'
+        try:
+            firstName = user[typeProfile]['firstName']
+            company = "Influencer"
+        except:
+            # Company
+            typeProfile = 'miniCompany'
+            try:
+                lastName = user[typeProfile]['name']
+                firstName = 'Company'
+                occupation = 'Company'
+                company = lastName
+            except:
+                PrintActorError('moreComment_'+str(postCnt)+'_'+str(commentCnt)+'_'+str(moreCommentCnt)+'.json')
+                # Script will crash now... but where exactly, is important to know!
+
+    if typeProfile == 'miniCompany':                    
+        nickName = user[typeProfile]['universalName']
+        userLink = 'https://www.linkedin.com/company/' + nickName + '/'
+    else:
+        lastName = user[typeProfile]['lastName']
+        nickName = user[typeProfile]['publicIdentifier']
+        occupation = user[typeProfile]['occupation']
+        userLink = 'https://www.linkedin.com/in/' + nickName + '/'
+    
+    userID = user[typeProfile]['objectUrn']
+    userID = re.findall(r'\d+', userID)[0]
+
+    # We do pictures when we have the crawling license...
+    picture = "N/A"
+
+    return userID, firstName, lastName, nickName, occupation, userLink, company, picture
 
 ESC.ResetBackGround()
 ESC.ResetForeGround()
@@ -224,8 +274,8 @@ for post in posts:
         with open('debug/post_'+ str(postCnt)+'.json', 'w') as f:
             json.dump(post, f)   
 
-    userID = post['actor']['urn']
-    userID = re.findall(r'\d+', userID)[0]
+    userID, firstName, lastName, nickName, occupation, userLink, company, picture = extract_user(post['actor']['name']['attributes'])
+    user_to_users(userID, firstName, lastName, nickName, occupation, userLink, company, picture)
 
     # Get postID, it's under updateMetadata.urn
     postID = post['updateMetadata']['urn']
@@ -391,6 +441,9 @@ for post in posts:
                     commentID2 = fix_commentID(moreComment['dashEntityUrn'])
                 
                     # Extract most user-info from encapsulated dict
+                    commenterID, firstName, lastName, nickName, occupation, userLink, company, picture = extract_user(moreComment['commenterForDashConversion']['image']['attributes'])
+
+                    '''
                     user = moreComment['commenterForDashConversion']['image']['attributes']
                     # Remove leading and trailing '[' and ']' if they exist
                     user = str(user).strip('[]')
@@ -430,9 +483,9 @@ for post in posts:
                     
                     commenterID = user[typeProfile]['objectUrn']
                     commenterID = re.findall(r'\d+', commenterID)[0]
-
                     # We do pictures when we have the crawling license...
                     picture = "N/A"
+                    '''
 
                     if debug_level > 0:
                         print('moreComment_'+str(postCnt)+'_'+str(commentCnt)+'_'+str(moreCommentCnt)+'.json')

@@ -45,7 +45,7 @@ if not os.path.exists('users'):
 if not os.path.exists('posts.csv'):
     with open('posts.csv', 'w', newline='') as f:
         writer = csv.writer(f)
-        writer.writerow(['id', 'date', 'link','likes','shares','comments'])
+        writer.writerow(['id', 'date', 'link','likes','shares','comments','userID'])
 
 # Create posts folder, if missing
 if not os.path.exists('posts'):

@@ -224,6 +224,9 @@ for post in posts:
         with open('debug/post_'+ str(postCnt)+'.json', 'w') as f:
             json.dump(post, f)   
 
+    userID = post['actor']['urn']
+    userID = re.findall(r'\d+', userID)[0]
+
     # Get postID, it's under updateMetadata.urn
     postID = post['updateMetadata']['urn']
     # Remove non-numeric parts in front of the postID
@@ -265,7 +268,7 @@ for post in posts:
     if not postExist:
         with open('posts.csv', 'a', newline='') as f:
             writer = csv.writer(f)
-            writer.writerow([postID, postDate, postLink, numLikes, numShares, numComments])
+            writer.writerow([postID, postDate, postLink, numLikes, numShares, numComments, userID])
         # Write post to posts folder
         with open('posts/' + postID + '.txt', 'w', encoding='utf-8') as f:
             f.write(postText)

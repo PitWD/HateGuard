@@ -46,7 +46,7 @@ def PrintMenu():
     print(" ", end="", flush=True)  
     ESC.CursorLeft(1)
 
-def PrintPrePosts(postFile, parentFile, textLen):
+def PrintPrePosts(postFile, postID, parentFile, parentID, textLen):
     #Print Header and Post History
     ESC.CLS()
     ESC.CursorRight(2)
@@ -150,6 +150,8 @@ with open('comments.csv', 'r') as f:
         postFile = ""
         commentFile = ""
         parentFile = ""
+        postID = ""
+        parentID = ""   
         ratingCnt = 0
         ratingOK = 0
         ratingWarning = 0
@@ -206,6 +208,7 @@ with open('comments.csv', 'r') as f:
                             # Open post file
                             with open('posts/' + post[0] + '.txt', 'r') as f:
                                 postFile = f.read()
+                                postID = post[0]
                             break
                 
                 # Check if parent is a comment
@@ -218,15 +221,18 @@ with open('comments.csv', 'r') as f:
                                 # Open parent file
                                 with open('comments/' + comment2[0] + '.txt', 'r') as f:
                                     parentFile = f.read()
+                                    parentID = comment2[0]
                                 break
                     try:
                         # Open parent - post
                         with open('posts/' + comment2[3] + '.txt', 'r') as f:
                             postFile = f.read()
+                            postID = comment2[3]
                     except:
                         # Parent is a comment, too
                         with open('comments/' + comment2[3] + '.txt', 'r') as f:
                             postFile = f.read()
+                            postID = comment2[3]
 
 
                 pressedKey = ""
@@ -235,7 +241,7 @@ with open('comments.csv', 'r') as f:
                     os.system('stty -echo')
 
                     #Print Header and Post History
-                    PrintPrePosts(postFile, parentFile, textLen)
+                    PrintPrePosts(postFile, postID, parentFile, parentID, textLen)
                     # Print User Infos
                     PrintUserPost(commentFile, userName, userRating, userOccupation, userCompany, commentDate)
                     # Print Menu

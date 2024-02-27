@@ -57,11 +57,23 @@ def PrintPrePosts(postFile, postID, parentFile, parentID, textLen):
     print("")
     # Print Post History
     if postFile != "":
+        # Look, if postID is a post or a comment
+        # Search for postID in posts.csv
+        # If not, search for postID in comments.csv
+        # When postID is found, get the userID
+        # Search for userID in users.csv
+        # Get users rating
         ESC.SetForeGround(ESC.Solarized16.Base01)
         postFile = ESC.BreakLines(postFile, 60)
         ESC.PrintLines(postFile, 19, 5)
 
     if parentFile != "":
+        # Look, if parentID is a comment or a post
+        # Search for parentID in comments.csv
+        # If not, search for parentID in posts.csv
+        # When parentID is found, get the userID
+        # Search for userID in users.csv
+        # Get users rating
         ESC.SetForeGround(ESC.Solarized16.Base0)
         parentFile = ESC.BreakLines(parentFile, 60)
         ESC.PrintLines(parentFile, 10, textLen)
